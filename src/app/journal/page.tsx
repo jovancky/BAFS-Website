@@ -27,7 +27,7 @@ const journalScenarios = [
         scenario: "Purchased office equipment worth $750 on credit from 'Supplies Co.'",
         answer: [
             { account: 'Office Equipment', debit: '750', credit: '' },
-            { account: 'Accounts Payable: Supplies Co.', debit: '', credit: '750' }
+            { account: 'Other Payables: Supplies Co.', debit: '', credit: '750' }
         ]
     },
     {
@@ -81,8 +81,21 @@ export default function JournalPage() {
 
             {isSubmitted && (
                  <div className="flex justify-end">
-                    {isLastQuestion ? (
+                    {isLastQuestion && isCorrect ? (
                         <Card className="bg-green-500/10 border-green-500/20 p-4 flex flex-col items-center gap-2">
+                             <CheckCircle className="h-8 w-8 text-green-500"/>
+                            <p className="font-semibold text-green-500">You've completed all journal entries!</p>
+                            <Link href="/journal" passHref>
+                                <Button variant="outline" onClick={() => {
+                                    setQuestionIndex(0);
+                                    setIsSubmitted(false);
+                                    setIsCorrect(false);
+                                    setKey(Date.now());
+                                }}>Practice Again</Button>
+                            </Link>
+                        </Card>
+                    ) : isLastQuestion && !isCorrect ? (
+                         <Card className="bg-green-500/10 border-green-500/20 p-4 flex flex-col items-center gap-2">
                              <CheckCircle className="h-8 w-8 text-green-500"/>
                             <p className="font-semibold text-green-500">You've completed all journal entries!</p>
                             <Link href="/journal" passHref>

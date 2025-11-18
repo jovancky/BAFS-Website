@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { CheckCircle, XCircle, PlusCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 
 type LedgerEntry = {
     id: number;
@@ -42,6 +44,51 @@ type ErrorState = {
 
 const createEmptyEntry = (): LedgerEntry => ({ id: Date.now() + Math.random(), date: '', accountName: '', amount: 0 });
 
+const SolutionDisplay = ({ solution }: { solution: SolutionLedger }) => {
+    const calculateTotal = (entries: number[]) => entries.reduce((sum, current) => sum + current, 0).toFixed(2);
+
+    return (
+        <Card className="mt-6 bg-green-500/5 border-green-500/20">
+            <CardHeader>
+                <CardTitle className="text-green-500 flex items-center gap-2">
+                    <CheckCircle />
+                    Correct Solution
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 gap-6">
+                    {Object.entries(solution).map(([accountName, accountData]) => (
+                        <div key={accountName} className="border rounded-lg bg-background shadow-sm">
+                            <div className="p-2 bg-secondary/50 rounded-t-lg">
+                                <p className="font-semibold text-center">{accountName}</p>
+                            </div>
+                            <div className="grid grid-cols-2">
+                                <div className="border-r p-2">
+                                    <p className="text-xs text-muted-foreground text-center p-2 border-b">Debit</p>
+                                    {accountData.debits.filter(amount => amount > 0).map((amount, i) => (
+                                        <div key={i} className="text-right text-sm py-1 pr-2">{amount.toFixed(2)}</div>
+                                    ))}
+                                </div>
+                                <div className="p-2">
+                                    <p className="text-xs text-muted-foreground text-center p-2 border-b">Credit</p>
+                                     {accountData.credits.filter(amount => amount > 0).map((amount, i) => (
+                                        <div key={i} className="text-right text-sm py-1 pr-2">{amount.toFixed(2)}</div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 border-t mt-1">
+                                <div className="p-2 border-r text-right font-bold text-sm">{calculateTotal(accountData.debits)}</div>
+                                <div className="p-2 text-right font-bold text-sm">{calculateTotal(accountData.credits)}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
+
+
 export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerProps) {
     const createEmptyTAccount = (id: number, name = ''): TAccount => ({
         id,
@@ -54,6 +101,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         Array.from({ length: 1 }, (_, i) => createEmptyTAccount(i + 1))
     );
     const [errors, setErrors] = useState<ErrorState>({});
+    const [showSolution, setShowSolution] = useState(false);
 
     const handleAccountNameChange = (id: number, newName: string) => {
         setAccounts(prevAccounts =>
@@ -65,6 +113,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
             if(newErrors.accounts) delete newErrors.accounts[id];
             setErrors(newErrors);
         }
+        setShowSolution(false);
     };
 
     const handleEntryChange = (
@@ -106,6 +155,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
             if(newErrors.entries) delete newErrors.entries[entryId];
             setErrors(newErrors);
         }
+        setShowSolution(false);
     };
 
     const addAccount = () => {
@@ -118,6 +168,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
 
     const handleSubmit = () => {
         setErrors({});
+        setShowSolution(false);
         let newErrors: ErrorState = { accounts: {}, entries: {} };
         let userScore = 0;
 
@@ -133,42 +184,48 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                 totalCredits += acc.credits.reduce((s, e) => s + e.amount, 0);
             }
         });
+        
+        // Sum of all correct debit/credit values + one point for each correct account
+        const solutionTotalValue = Object.values(solution).reduce((sum, acc) => {
+            const debitsSum = acc.debits.reduce((s, v) => s + v, 0);
+            const creditsSum = acc.credits.reduce((s, v) => s + v, 0);
+            return sum + debitsSum + creditsSum;
+        }, 0);
+        const totalMarks = Object.keys(solution).length + solutionTotalValue;
 
-        const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v, 0);
-        const solutionTotalCredits = Object.values(solution).flatMap(acc => acc.credits).reduce((s, v) => s + v, 0);
-        const totalMarks = Object.keys(solution).length + solutionTotalDebits + solutionTotalCredits;
 
         if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
              newErrors.general = `The ledger is not balanced. Total Debits ($${totalDebits.toFixed(2)}) do not equal Total Credits ($${totalCredits.toFixed(2)}).`;
         }
-        else if (totalDebits.toFixed(2) !== solutionTotalDebits.toFixed(2)) {
+        else if (totalDebits.toFixed(2) !== Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v, 0).toFixed(2)) {
+            const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v, 0);
             newErrors.general = `The total debits and credits ($${totalDebits.toFixed(2)}) do not match the correct total of $${solutionTotalDebits.toFixed(2)}. Please review your entries.`;
         }
 
         const normalizedSolution: SolutionLedger = {};
         Object.keys(solution).forEach(key => {
             normalizedSolution[key.toLowerCase()] = {
-                debits: solution[key].debits.filter(d => d > 0).sort(),
-                credits: solution[key].credits.filter(c => c > 0).sort(),
+                debits: solution[key].debits.filter(d => d > 0).sort((a,b) => a-b),
+                credits: solution[key].credits.filter(c => c > 0).sort((a,b) => a-b),
             }
         });
 
         const userAccountKeys = Object.keys(userLedger);
         const solutionAccountKeys = Object.keys(normalizedSolution);
         
-        let correctAccounts = 0;
-        let correctDebits = 0;
-        let correctCredits = 0;
+        let correctAccountsValue = 0;
+        let correctDebitsValue = 0;
+        let correctCreditsValue = 0;
 
         solutionAccountKeys.forEach(solKey => {
             if(userLedger[solKey]) {
-                correctAccounts++;
+                correctAccountsValue++;
                 const userAccount = userLedger[solKey];
                 const solutionAccount = normalizedSolution[solKey];
 
-                const userDebits = userAccount.debits.map(d => d.amount).filter(d => d > 0).sort();
+                const userDebits = userAccount.debits.map(d => d.amount).filter(d => d > 0).sort((a,b) => a-b);
                 if (JSON.stringify(userDebits) === JSON.stringify(solutionAccount.debits)) {
-                    correctDebits += solutionAccount.debits.reduce((s,v) => s + v, 0);
+                    correctDebitsValue += solutionAccount.debits.reduce((s,v) => s + v, 0);
                 } else {
                     userAccount.debits.forEach(entry => {
                          if(entry.amount > 0 && !solutionAccount.debits.includes(entry.amount)) {
@@ -177,9 +234,9 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                     })
                 }
 
-                const userCredits = userAccount.credits.map(c => c.amount).filter(c => c > 0).sort();
+                const userCredits = userAccount.credits.map(c => c.amount).filter(c => c > 0).sort((a,b) => a-b);
                 if (JSON.stringify(userCredits) === JSON.stringify(solutionAccount.credits)) {
-                    correctCredits += solutionAccount.credits.reduce((s, v) => s + v, 0);
+                    correctCreditsValue += solutionAccount.credits.reduce((s, v) => s + v, 0);
                 } else {
                      userAccount.credits.forEach(entry => {
                          if(entry.amount > 0 && !solutionAccount.credits.includes(entry.amount)) {
@@ -199,11 +256,16 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
             }
         });
         
-        userScore = correctAccounts + correctDebits + correctCredits;
+        userScore = correctAccountsValue + correctDebitsValue + correctCreditsValue;
         newErrors.score = { user: userScore, total: totalMarks };
 
         if(!newErrors.general && userScore === totalMarks) {
             newErrors.general = 'Correct! All accounts are posted perfectly.'
+        } else if (!newErrors.general) {
+            newErrors.general = 'Some entries are incorrect. Compare with the solution below.'
+            setShowSolution(true);
+        } else {
+            setShowSolution(true);
         }
         
         setErrors(newErrors);
@@ -303,6 +365,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                     <p className="font-bold text-lg">Your Score: <span className="text-primary">{errors.score.user} / {errors.score.total}</span></p>
                 </div>
             )}
+             {showSolution && <SolutionDisplay solution={solution} />}
         </div>
     );
 }

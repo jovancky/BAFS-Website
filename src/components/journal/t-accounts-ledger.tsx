@@ -36,7 +36,7 @@ type TAccountsLedgerProps = {
     solution: SolutionLedger;
 };
 
-const createEmptyEntry = (): LedgerEntry => ({ id: Date.now(), date: '', accountName: '', amount: 0 });
+const createEmptyEntry = (): LedgerEntry => ({ id: Date.now() + Math.random(), date: '', accountName: '', amount: 0 });
 
 export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerProps) {
     const createEmptyTAccount = (id: number, name = ''): TAccount => ({
@@ -67,7 +67,8 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         setAccounts(prevAccounts =>
             prevAccounts.map(acc => {
                 if (acc.id === accountId) {
-                    const newEntries = [...acc[side].entries];
+                    const newSide = { ...acc[side] };
+                    const newEntries = [...newSide.entries];
                     const entryToUpdate = { ...newEntries[entryIndex] };
 
                     if (field === 'amount') {
@@ -216,7 +217,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6">
                 {accounts.map(account => (
                     <div key={account.id} className="border rounded-lg shadow-sm">
                         <div className="p-2 bg-secondary/50 rounded-t-lg">

@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
 const initialScenario = {
+    title: "Starting a Small Business",
+    businessType: "You have started a new consulting business. The following transactions occurred during the first month.",
     transactions: [
         { date: "Jan 1", description: "Started business with $100,000 cash, which was deposited into the bank." },
-        { date: "Jan 7", description: "Purchases goods for $60,000 in cash." },
-        { date: "Jan 9", description: "Purchased a machine on credit from Advance Machinery Company for $12,000." },
+        { date: "Jan 7", description: "Purchases office supplies for $60,000 in cash." },
+        { date: "Jan 9", description: "Purchased an office machine (a non-current asset) on credit from Advance Machinery Company for $12,000." },
         { date: "Jan 15", description: "Paid rent by cash $5,000." },
         { date: "Jan 20", description: "Provided services to a client and received $20,000 cash." },
         { date: "Jan 25", description: "Owner took $2,000 cash for personal use." },
@@ -42,8 +44,8 @@ export default function ScenarioStartPage() {
     return (
         <div className="container mx-auto py-10 space-y-8">
             <div>
-                <h1 className="font-headline text-4xl font-bold text-primary">Scenario: Starting a Small Business</h1>
-                <p className="text-lg text-muted-foreground mt-2">Record the following transactions for January in the ledgers below.</p>
+                <h1 className="font-headline text-4xl font-bold text-primary">Scenario: {scenario.title}</h1>
+                <p className="text-lg text-muted-foreground mt-2">{scenario.businessType}</p>
             </div>
 
             <Card>

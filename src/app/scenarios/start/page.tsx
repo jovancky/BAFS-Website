@@ -173,7 +173,7 @@ export default function ScenarioStartPage() {
                             </Link>
                         </Card>
                     ) : (
-                        <Button onClick={handleNextQuestion} disabled={!submitted || isLastQuestion}>
+                        <Button onClick={handleNextQuestion} disabled={isLastQuestion}>
                             Next Question <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     )}

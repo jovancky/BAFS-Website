@@ -84,7 +84,7 @@ const scenarios = [
         businessType: "You manage the finances for a trendy clothing boutique that buys and sells apparel.",
         transactions: [
             { date: "Apr 1", description: "Purchased a new collection of dresses on credit from 'Fashion Forward Co.' for $25,000." },
-            { date: "Apr 3", description: "Paid for a one-year insurance policy for $2,400 with a cheque. This is a prepaid expense." },
+            { date: "Apr 3", description: "Paid for a one-year insurance policy for $2,400 with a cheque." },
             { date: "Apr 7", description: "Sold clothes for $8,000 cash." },
             { date: "Apr 10", description: "A customer returned a dress purchased for cash and was given a $200 cash refund." },
             { date: "Apr 15", description: "Paid half of the amount owed to Fashion Forward Co. by cheque." },

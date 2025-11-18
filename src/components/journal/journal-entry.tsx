@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trash2, PlusCircle, CheckCircle, XCircle } from 'lucide-react';
 
@@ -20,14 +19,6 @@ type JournalEntryProps = {
     scenario?: string;
     answer?: AnswerLine[];
 };
-
-const accounts = [
-    'Cash', 'Bank', 'Accounts Receivable', 'Inventory', 'Prepaid Rent', 'Equipment', 'Machinery',
-    'Accounts Payable', 'Trade Payables', 'Salaries Payable', 'Unearned Revenue', 'Notes Payable',
-    'Capital', 'Drawings',
-    'Revenue', 'Commission Revenue',
-    'Expenses', 'Rent', 'Salaries Expense', 'Purchases'
-];
 
 const defaultAnswer: AnswerLine[] = [
     { account: 'Rent', debit: '1200', credit: '' },
@@ -71,7 +62,7 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
 
         if (answer) {
             const userEntry = lines
-                .map(({ account, debit, credit }) => ({ account, debit: parseFloat(debit) || 0, credit: parseFloat(credit) || 0 }))
+                .map(({ account, debit, credit }) => ({ account: account.trim(), debit: parseFloat(debit) || 0, credit: parseFloat(credit) || 0 }))
                 .filter(l => l.account && (l.debit > 0 || l.credit > 0));
 
             const correctAnswer = answer
@@ -85,7 +76,7 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
 
             const isCorrect = correctAnswer.every(correctLine => {
                 return userEntry.some(userLine =>
-                    userLine.account === correctLine.account &&
+                    userLine.account.toLowerCase() === correctLine.account.toLowerCase() &&
                     userLine.debit === correctLine.debit &&
                     userLine.credit === correctLine.credit
                 );
@@ -122,14 +113,11 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
                         {lines.map(line => (
                             <TableRow key={line.id}>
                                 <TableCell>
-                                    <Select onValueChange={(value) => handleLineChange(line.id, 'account', value)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select an account" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {accounts.map(acc => <SelectItem key={acc} value={acc}>{acc}</SelectItem>)}
-                                        </SelectContent>
-                                    </Select>
+                                    <Input
+                                        placeholder="Enter account name"
+                                        value={line.account}
+                                        onChange={(e) => handleLineChange(line.id, 'account', e.target.value)}
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Input

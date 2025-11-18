@@ -8,7 +8,6 @@ const scenarios = [
         title: 'Starting a Small Business',
         description: 'Navigate the initial financial steps of launching a new venture.',
         icon: Briefcase,
-        tags: ['Beginner', 'Equity', 'Assets'],
         link: '/scenarios/start'
     }
 ];
@@ -22,31 +21,26 @@ export default function ScenariosPage() {
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {scenarios.map((scenario) => (
-                    <Card key={scenario.title} className="flex flex-col">
-                        <CardHeader className="flex-row items-start gap-4 space-y-0">
-                           <div className="p-3 bg-primary/10 rounded-lg">
-                             <scenario.icon className="w-6 h-6 text-primary" />
-                           </div>
-                           <div>
-                            <CardTitle>{scenario.title}</CardTitle>
-                            <CardDescription>{scenario.description}</CardDescription>
-                           </div>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                             <div className="flex gap-2">
-                                {scenario.tags.map(tag => (
-                                    <span key={tag} className="px-2 py-1 text-xs bg-secondary rounded-full">{tag}</span>
-                                ))}
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Link href={scenario.link} className="w-full">
-                                <Button className="w-full">
+                    <Link href={scenario.link} key={scenario.title} className="block hover:bg-card/95 rounded-lg border bg-card text-card-foreground shadow-sm transition-colors">
+                        <Card className="flex flex-col h-full border-0 shadow-none">
+                            <CardHeader className="flex-row items-start gap-4 space-y-0">
+                               <div className="p-3 bg-primary/10 rounded-lg">
+                                 <scenario.icon className="w-6 h-6 text-primary" />
+                               </div>
+                               <div>
+                                <CardTitle>{scenario.title}</CardTitle>
+                                <CardDescription>{scenario.description}</CardDescription>
+                               </div>
+                            </CardHeader>
+                            <CardContent className="flex-grow">
+                            </CardContent>
+                            <CardFooter>
+                                <div className="flex items-center text-sm font-medium text-primary w-full">
                                     Start Scenario <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            </Link>
-                        </CardFooter>
-                    </Card>
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    </Link>
                 ))}
             </div>
         </div>

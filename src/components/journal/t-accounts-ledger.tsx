@@ -199,10 +199,24 @@ export function TAccountsLedger({ solution }: TAccountsLedgerProps) {
         let totalDebits = 0;
         let totalCredits = 0;
 
+        const accountAliases: {[key: string]: string[]} = {
+            'accounts payable': ['trade payables', 'other payables', 'non-trade payables']
+        };
+
+        const getCanonicalName = (name: string) => {
+            const lowerName = name.trim().toLowerCase();
+            for (const canonical in accountAliases) {
+                if (accountAliases[canonical].includes(lowerName)) {
+                    return canonical;
+                }
+            }
+            return lowerName;
+        };
+
         accounts.forEach(acc => {
             if (acc.name.trim()) {
-                const name = acc.name.trim().toLowerCase();
-                userLedger[name] = acc;
+                const canonicalName = getCanonicalName(acc.name);
+                userLedger[canonicalName] = acc;
                 totalDebits += acc.debits.reduce((s, e) => s + e.amount, 0);
                 totalCredits += acc.credits.reduce((s, e) => s + e.amount, 0);
             }
@@ -282,7 +296,7 @@ export function TAccountsLedger({ solution }: TAccountsLedgerProps) {
         
         userAccountKeys.forEach(userKey => {
             if(!normalizedSolution[userKey]){
-                const wrongAccount = accounts.find(a => a.name.toLowerCase() === userKey);
+                const wrongAccount = accounts.find(a => getCanonicalName(a.name) === userKey);
                 if (wrongAccount && newErrors.accounts) {
                     newErrors.accounts[wrongAccount.id] = 'Incorrect account or misspelled.';
                 }

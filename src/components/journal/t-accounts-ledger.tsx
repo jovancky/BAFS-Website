@@ -115,15 +115,14 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         });
         
         if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
-             setFeedback({ type: 'error', message: 'The ledger is not balanced. Total debits must equal total credits.' });
+             setFeedback({ type: 'error', message: `The ledger is not balanced. Total Debits ($${totalDebits.toFixed(2)}) do not equal Total Credits ($${totalCredits.toFixed(2)}).` });
              return;
         }
 
         const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s,v) => s+v, 0);
-        const solutionTotalCredits = Object.values(solution).flatMap(acc => acc.credits).reduce((s,v) => s+v, 0);
-
-        if (totalDebits.toFixed(2) !== solutionTotalDebits.toFixed(2) || totalCredits.toFixed(2) !== solutionTotalCredits.toFixed(2)) {
-            setFeedback({ type: 'error', message: 'The total debits and credits do not match the solution. Please review your entries.' });
+        
+        if (totalDebits.toFixed(2) !== solutionTotalDebits.toFixed(2)) {
+            setFeedback({ type: 'error', message: `The total debits and credits ($${totalDebits.toFixed(2)}) do not match the correct total of $${solutionTotalDebits.toFixed(2)}. Please review your entries.` });
             return;
         }
 
@@ -135,46 +134,41 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
             }
         });
 
-        let isCorrect = true;
         const userAccountKeys = Object.keys(userLedger);
         const solutionAccountKeys = Object.keys(normalizedSolution);
 
         if (userAccountKeys.length !== solutionAccountKeys.length) {
-            isCorrect = false;
-        } else {
-            const matchedSolutionKeys = new Set();
-            for (const userKey of userAccountKeys) {
-                const userAccount = {
-                    debits: userLedger[userKey].debits.sort(),
-                    credits: userLedger[userKey].credits.sort()
-                };
-
-                const foundMatch = solutionAccountKeys.some(solutionKey => {
-                    if (matchedSolutionKeys.has(solutionKey)) return false;
-
-                    const solutionAccount = normalizedSolution[solutionKey];
-                    if (JSON.stringify(userAccount.debits) === JSON.stringify(solutionAccount.debits) &&
-                        JSON.stringify(userAccount.credits) === JSON.stringify(solutionAccount.credits)) {
-                        matchedSolutionKeys.add(solutionKey);
-                        return true;
-                    }
-                    return false;
-                });
-
-                if (!foundMatch) {
-                    isCorrect = false;
-                    break;
-                }
+             setFeedback({ type: 'error', message: `You have ${userAccountKeys.length} accounts, but there should be ${solutionAccountKeys.length}. Please review the accounts you have created.` });
+             return;
+        }
+        
+        for (const userKey of userAccountKeys) {
+            if (!normalizedSolution[userKey]) {
+                setFeedback({ type: 'error', message: `The account "${accounts.find(a => a.name.toLowerCase() === userKey)?.name}" is not a valid account for this scenario or is misspelled.` });
+                return;
             }
-             if(matchedSolutionKeys.size !== solutionAccountKeys.length) isCorrect = false;
-        }
 
+            const userAccount = {
+                debits: userLedger[userKey].debits.sort(),
+                credits: userLedger[userKey].credits.sort()
+            };
+            const solutionAccount = normalizedSolution[userKey];
 
-        if (isCorrect) {
-            setFeedback({ type: 'success', message: 'Correct! All accounts are posted perfectly.' });
-        } else {
-            setFeedback({ type: 'error', message: 'Some entries are incorrect. Please review your T-accounts.' });
+            if (JSON.stringify(userAccount.debits) !== JSON.stringify(solutionAccount.debits)) {
+                 const userTotal = userAccount.debits.reduce((a, b) => a + b, 0);
+                 const solutionTotal = solutionAccount.debits.reduce((a, b) => a + b, 0);
+                 setFeedback({ type: 'error', message: `The debit entries for "${accounts.find(a => a.name.toLowerCase() === userKey)?.name}" are incorrect. You have a total of $${userTotal.toFixed(2)}, but it should be $${solutionTotal.toFixed(2)}.` });
+                 return;
+            }
+            if (JSON.stringify(userAccount.credits) !== JSON.stringify(solutionAccount.credits)) {
+                const userTotal = userAccount.credits.reduce((a, b) => a + b, 0);
+                const solutionTotal = solutionAccount.credits.reduce((a, b) => a + b, 0);
+                setFeedback({ type: 'error', message: `The credit entries for "${accounts.find(a => a.name.toLowerCase() === userKey)?.name}" are incorrect. You have a total of $${userTotal.toFixed(2)}, but it should be $${solutionTotal.toFixed(2)}.` });
+                return;
+            }
         }
+        
+        setFeedback({ type: 'success', message: 'Correct! All accounts are posted perfectly.' });
     };
 
     const renderSide = (accountId: number, side: 'debits' | 'credits') => (

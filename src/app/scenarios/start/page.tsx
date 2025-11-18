@@ -11,7 +11,7 @@ const transactions = [
     { date: "Jan 30", description: "Paid Advance Machinery Company in full." },
 ];
 
-const accountsForScenario = [
+const initialAccounts = [
     "Bank", "Cash", "Purchases", "Machinery", "Accounts Payable", "Capital", "Rent Expense", "Service Revenue", "Drawings"
 ];
 
@@ -54,11 +54,11 @@ export default function ScenarioStartPage() {
                 <CardHeader>
                     <CardTitle className="font-headline text-2xl">General Ledger</CardTitle>
                     <CardDescription>
-                        Enter the amounts for each transaction into the correct side of the T-accounts.
+                        Create T-accounts and enter the amounts for each transaction into the correct side.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <TAccountsLedger accounts={accountsForScenario} solution={correctLedger} />
+                    <TAccountsLedger initialAccounts={initialAccounts} solution={correctLedger} />
                 </CardContent>
             </Card>
         </div>

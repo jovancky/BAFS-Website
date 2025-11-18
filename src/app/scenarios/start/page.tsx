@@ -56,6 +56,52 @@ const scenarios = [
             "Trade Payables: Tech Supplies Inc.": { debits: [{ amount: 2000, date: 'Feb 20', account: 'Returns Outwards' }, { amount: 28000, date: 'Feb 28', account: 'Bank' }], credits: [{ amount: 30000, date: 'Feb 1', account: 'Purchases' }] },
             "Returns Outwards": { debits: [], credits: [{ amount: 2000, date: 'Feb 20', account: 'Trade Payables: Tech Supplies Inc.' }] },
         }
+    },
+    {
+        title: "Service Business: Law Firm",
+        businessType: "You are the accountant for a law firm. The firm provides legal services and bills clients. It does not sell any goods.",
+        transactions: [
+            { date: "Mar 1", description: "Billed a client, 'Innovate Corp', $15,000 for legal services rendered." },
+            { date: "Mar 5", description: "Paid monthly salaries of $35,000 by bank transfer." },
+            { date: "Mar 10", description: "Received a payment of $10,000 from Innovate Corp." },
+            { date: "Mar 15", description: "Purchased new law books for the office library for $3,000 cash. These are considered office equipment." },
+            { date: "Mar 20", description: "Paid electricity bill of $1,200 by cheque." },
+            { date: "Mar 25", description: "Provided legal advice and received $5,000 cash on the spot." },
+            { date: "Mar 31", description: "Received the remaining amount from Innovate Corp." },
+        ],
+        solution: {
+            "Trade Receivables: Innovate Corp": { debits: [{ amount: 15000, date: 'Mar 1', account: 'Legal Fees Revenue' }], credits: [{ amount: 10000, date: 'Mar 10', account: 'Bank' }, { amount: 5000, date: 'Mar 31', account: 'Bank' }] },
+            "Legal Fees Revenue": { debits: [], credits: [{ amount: 15000, date: 'Mar 1', account: 'Trade Receivables: Innovate Corp' }, { amount: 5000, date: 'Mar 25', account: 'Cash' }] },
+            "Salaries": { debits: [{ amount: 35000, date: 'Mar 5', account: 'Bank' }], credits: [] },
+            "Bank": { debits: [{ amount: 10000, date: 'Mar 10', account: 'Trade Receivables: Innovate Corp' }, { amount: 5000, date: 'Mar 31', account: 'Trade Receivables: Innovate Corp' }], credits: [{ amount: 35000, date: 'Mar 5', account: 'Salaries' }, { amount: 1200, date: 'Mar 20', account: 'Electricity' }] },
+            "Equipment": { debits: [{ amount: 3000, date: 'Mar 15', account: 'Cash' }], credits: [] },
+            "Cash": { debits: [{ amount: 5000, date: 'Mar 25', account: 'Legal Fees Revenue' }], credits: [{ amount: 3000, date: 'Mar 15', account: 'Equipment' }] },
+            "Electricity": { debits: [{ amount: 1200, date: 'Mar 20', account: 'Bank' }], credits: [] },
+        }
+    },
+    {
+        title: "Retail Operations: Clothing Store",
+        businessType: "You manage the finances for a trendy clothing boutique that buys and sells apparel.",
+        transactions: [
+            { date: "Apr 1", description: "Purchased a new collection of dresses on credit from 'Fashion Forward Co.' for $25,000." },
+            { date: "Apr 3", description: "Paid for a one-year insurance policy for $2,400 with a cheque. This is a prepaid expense." },
+            { date: "Apr 7", description: "Sold clothes for $8,000 cash." },
+            { date: "Apr 10", description: "A customer returned a dress purchased for cash and was given a $200 cash refund." },
+            { date: "Apr 15", description: "Paid half of the amount owed to Fashion Forward Co. by cheque." },
+            { date: "Apr 18", description: "Sold a bulk order of shirts on credit to a local school for $5,000." },
+            { date: "Apr 22", description: "The school returned shirts worth $500 as they were the wrong size." },
+            { date: "Apr 28", description: "Received full payment from the school." },
+        ],
+        solution: {
+            "Purchases": { debits: [{ amount: 25000, date: 'Apr 1', account: 'Trade Payables: Fashion Forward Co.' }], credits: [] },
+            "Prepaid Insurance": { debits: [{ amount: 2400, date: 'Apr 3', account: 'Bank' }], credits: [] },
+            "Bank": { debits: [{ amount: 4500, date: 'Apr 28', account: 'Trade Receivables: School' }], credits: [{ amount: 2400, date: 'Apr 3', account: 'Prepaid Insurance' }, { amount: 12500, date: 'Apr 15', account: 'Trade Payables: Fashion Forward Co.' }] },
+            "Cash": { debits: [{ amount: 8000, date: 'Apr 7', account: 'Sales' }], credits: [{ amount: 200, date: 'Apr 10', account: 'Returns Inwards' }] },
+            "Sales": { debits: [], credits: [{ amount: 8000, date: 'Apr 7', account: 'Cash' }, { amount: 5000, date: 'Apr 18', account: 'Trade Receivables: School' }] },
+            "Returns Inwards": { debits: [{ amount: 200, date: 'Apr 10', account: 'Cash' }, { amount: 500, date: 'Apr 22', account: 'Trade Receivables: School' }], credits: [] },
+            "Trade Payables: Fashion Forward Co.": { debits: [{ amount: 12500, date: 'Apr 15', account: 'Bank' }], credits: [{ amount: 25000, date: 'Apr 1', account: 'Purchases' }] },
+            "Trade Receivables: School": { debits: [{ amount: 5000, date: 'Apr 18', account: 'Sales' }], credits: [{ amount: 500, date: 'Apr 22', account: 'Returns Inwards' }, { amount: 4500, date: 'Apr 28', account: 'Bank' }] },
+        }
     }
 ];
 
@@ -127,7 +173,7 @@ export default function ScenarioStartPage() {
                             </Link>
                         </Card>
                     ) : (
-                        <Button onClick={handleNextQuestion} disabled={!submitted}>
+                        <Button onClick={handleNextQuestion} disabled={!submitted || isLastQuestion}>
                             Next Question <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     )}
@@ -136,3 +182,5 @@ export default function ScenarioStartPage() {
         </div>
     );
 }
+
+    

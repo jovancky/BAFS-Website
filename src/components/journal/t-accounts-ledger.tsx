@@ -6,8 +6,15 @@ import { Input } from '@/components/ui/input';
 import { CheckCircle, XCircle, PlusCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
+type LedgerEntry = {
+    id: number;
+    date: string;
+    accountName: string;
+    amount: number;
+};
+
 type LedgerSide = {
-    entries: number[];
+    entries: LedgerEntry[];
 };
 
 type TAccount = {
@@ -29,12 +36,14 @@ type TAccountsLedgerProps = {
     solution: SolutionLedger;
 };
 
+const createEmptyEntry = (): LedgerEntry => ({ id: Date.now(), date: '', accountName: '', amount: 0 });
+
 export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerProps) {
     const createEmptyTAccount = (id: number, name = ''): TAccount => ({
         id,
         name,
-        debits: { entries: [0] },
-        credits: { entries: [0] },
+        debits: { entries: [createEmptyEntry()] },
+        credits: { entries: [createEmptyEntry()] },
     });
 
     const [accounts, setAccounts] = useState<TAccount[]>(() => 
@@ -48,20 +57,33 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         );
     };
 
-    const handleAmountChange = (accountId: number, side: 'debits' | 'credits', entryIndex: number, value: string) => {
-        const numericValue = parseFloat(value);
+    const handleEntryChange = (
+        accountId: number,
+        side: 'debits' | 'credits',
+        entryIndex: number,
+        field: keyof Omit<LedgerEntry, 'id'>,
+        value: string | number
+    ) => {
         setAccounts(prevAccounts =>
             prevAccounts.map(acc => {
                 if (acc.id === accountId) {
-                    const newSide = { ...acc[side] };
-                    newSide.entries[entryIndex] = isNaN(numericValue) ? 0 : numericValue;
+                    const newEntries = [...acc[side].entries];
+                    const entryToUpdate = { ...newEntries[entryIndex] };
 
-                    // Add a new empty input if the last one was filled
-                    if (entryIndex === newSide.entries.length - 1 && newSide.entries[entryIndex] !== 0) {
-                        newSide.entries.push(0);
+                    if (field === 'amount') {
+                        const numericValue = parseFloat(value as string);
+                        entryToUpdate.amount = isNaN(numericValue) ? 0 : numericValue;
+                    } else {
+                        (entryToUpdate[field] as string) = value as string;
+                    }
+                    
+                    newEntries[entryIndex] = entryToUpdate;
+
+                    if (entryIndex === newEntries.length - 1 && (entryToUpdate.amount !== 0 || entryToUpdate.date || entryToUpdate.accountName)) {
+                        newEntries.push(createEmptyEntry());
                     }
 
-                    return { ...acc, [side]: newSide };
+                    return { ...acc, [side]: { entries: newEntries } };
                 }
                 return acc;
             })
@@ -72,8 +94,8 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         setAccounts(prev => [...prev, createEmptyTAccount(Date.now())]);
     };
 
-    const calculateTotal = (entries: number[]) => {
-        return entries.reduce((sum, current) => sum + (current || 0), 0).toFixed(2);
+    const calculateTotal = (entries: LedgerEntry[]) => {
+        return entries.reduce((sum, current) => sum + (current.amount || 0), 0).toFixed(2);
     };
 
     const handleSubmit = () => {
@@ -83,8 +105,8 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
 
         accounts.forEach(acc => {
             if (acc.name.trim()) {
-                const debits = acc.debits.entries.filter(e => e > 0);
-                const credits = acc.credits.entries.filter(e => e > 0);
+                const debits = acc.debits.entries.filter(e => e.amount > 0).map(e => e.amount);
+                const credits = acc.credits.entries.filter(e => e.amount > 0).map(e => e.amount);
                 userLedger[acc.name.trim().toLowerCase()] = { debits, credits };
                 totalDebits += debits.reduce((s, v) => s + v, 0);
                 totalCredits += credits.reduce((s, v) => s + v, 0);
@@ -154,6 +176,44 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         }
     };
 
+    const renderSide = (accountId: number, side: 'debits' | 'credits') => (
+        <div className="p-2">
+            <div className="grid grid-cols-3 gap-1 mb-1 text-xs text-muted-foreground text-center">
+                <span>Date</span>
+                <span>Account</span>
+                <span className="text-right pr-2">Amount</span>
+            </div>
+            {accounts.find(acc => acc.id === accountId)?.[side].entries.map((entry, index) => {
+                const isLast = index === accounts.find(acc => acc.id === accountId)![side].entries.length - 1;
+                return (
+                    <div key={entry.id} className="grid grid-cols-3 gap-1 mb-1 items-center">
+                        <Input
+                            type="text"
+                            placeholder="Jan 1"
+                            className="h-8 text-xs"
+                            value={entry.date}
+                            onChange={(e) => handleEntryChange(accountId, side, index, 'date', e.target.value)}
+                        />
+                         <Input
+                            type="text"
+                            placeholder="e.g. Cash"
+                            className="h-8 text-xs"
+                            value={entry.accountName}
+                            onChange={(e) => handleEntryChange(accountId, side, index, 'accountName', e.target.value)}
+                        />
+                        <Input
+                            type="number"
+                            placeholder="0.00"
+                            className="text-right h-8 text-xs"
+                            value={entry.amount === 0 && !isLast ? '' : entry.amount}
+                            onChange={(e) => handleEntryChange(accountId, side, index, 'amount', e.target.value)}
+                        />
+                    </div>
+                );
+            })}
+        </div>
+    );
+
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -168,31 +228,13 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                             />
                         </div>
                         <div className="grid grid-cols-2">
-                            <div className="p-2 border-r">
-                                <p className="text-xs text-muted-foreground text-center mb-1">Debit</p>
-                                {account.debits.entries.map((amount, index) => (
-                                    <Input
-                                        key={index}
-                                        type="number"
-                                        placeholder="0.00"
-                                        className="text-right h-8 mb-1"
-                                        value={amount === 0 && account.debits.entries.length > 1 ? '' : amount}
-                                        onChange={(e) => handleAmountChange(account.id, 'debits', index, e.target.value)}
-                                    />
-                                ))}
+                            <div className="border-r">
+                                <p className="text-xs text-muted-foreground text-center p-2 border-b">Debit</p>
+                                {renderSide(account.id, 'debits')}
                             </div>
-                            <div className="p-2">
-                                <p className="text-xs text-muted-foreground text-center mb-1">Credit</p>
-                                {account.credits.entries.map((amount, index) => (
-                                    <Input
-                                        key={index}
-                                        type="number"
-                                        placeholder="0.00"
-                                        className="text-right h-8 mb-1"
-                                        value={amount === 0 && account.credits.entries.length > 1 ? '' : amount}
-                                        onChange={(e) => handleAmountChange(account.id, 'credits', index, e.target.value)}
-                                    />
-                                ))}
+                            <div>
+                                <p className="text-xs text-muted-foreground text-center p-2 border-b">Credit</p>
+                                {renderSide(account.id, 'credits')}
                             </div>
                         </div>
                         <div className="grid grid-cols-2 border-t mt-1">

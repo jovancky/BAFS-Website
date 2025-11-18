@@ -47,7 +47,7 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
     });
 
     const [accounts, setAccounts] = useState<TAccount[]>(() => 
-        Array.from({ length: 9 }, (_, i) => createEmptyTAccount(i + 1))
+        Array.from({ length: 1 }, (_, i) => createEmptyTAccount(i + 1))
     );
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

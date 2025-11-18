@@ -25,7 +25,7 @@ const defaultAnswer: AnswerLine[] = [
     { account: 'Cash', debit: '', credit: '1200' }
 ];
 
-export function JournalEntry({ scenario = "The company paid $1,200 for monthly office rent.", answer = defaultAnswer }: JournalEntryProps) {
+export function JournalEntry({ scenario = "The company paid $1,200 for monthly office rent by cash.", answer = defaultAnswer }: JournalEntryProps) {
     const [lines, setLines] = useState<JournalLine[]>([
         { id: 1, account: '', debit: '', credit: '' },
         { id: 2, account: '', debit: '', credit: '' },

@@ -17,10 +17,10 @@ const journalScenarios = [
         ]
     },
     {
-        scenario: "Received a cash payment of $5,000 from a client for services provided.",
+        scenario: "Received $5,000 cash as commission for services rendered.",
         answer: [
             { account: 'Cash', debit: '5000', credit: '' },
-            { account: 'Service Revenue', debit: '', credit: '5000' }
+            { account: 'Commission Revenue', debit: '', credit: '5000' }
         ]
     },
     {

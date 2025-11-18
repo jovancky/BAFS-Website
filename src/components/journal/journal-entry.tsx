@@ -25,12 +25,12 @@ const accounts = [
     'Cash', 'Bank', 'Accounts Receivable', 'Inventory', 'Prepaid Rent', 'Equipment', 'Machinery',
     'Accounts Payable', 'Trade Payables', 'Salaries Payable', 'Unearned Revenue', 'Notes Payable',
     'Capital', 'Drawings',
-    'Revenue', 'Service Revenue',
-    'Expenses', 'Rent Expense', 'Salaries Expense', 'Purchases'
+    'Revenue', 'Commission Revenue',
+    'Expenses', 'Rent', 'Salaries Expense', 'Purchases'
 ];
 
 const defaultAnswer: AnswerLine[] = [
-    { account: 'Rent Expense', debit: '1200', credit: '' },
+    { account: 'Rent', debit: '1200', credit: '' },
     { account: 'Cash', debit: '', credit: '1200' }
 ];
 

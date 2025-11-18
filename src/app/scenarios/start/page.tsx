@@ -11,20 +11,16 @@ const transactions = [
     { date: "Jan 30", description: "Paid Advance Machinery Company in full by cheque." },
 ];
 
-const initialAccounts = [
-    "Bank", "Cash", "Purchases", "Machinery", "Accounts Payable", "Capital", "Rent Expense", "Service Revenue", "Drawings"
-];
-
 const correctLedger = {
-    "Bank": { debits: [100000], credits: [12000] },
-    "Cash": { debits: [20000], credits: [60000, 5000, 2000] },
-    "Purchases": { debits: [60000], credits: [] },
-    "Machinery": { debits: [12000], credits: [] },
-    "Accounts Payable": { debits: [12000], credits: [12000] },
-    "Capital": { debits: [], credits: [100000] },
-    "Rent Expense": { debits: [5000], credits: [] },
-    "Service Revenue": { debits: [], credits: [20000] },
-    "Drawings": { debits: [2000], credits: [] },
+    "Bank": { debits: [{amount: 100000, date: 'Jan 1', account: 'Capital'}], credits: [{amount: 12000, date: 'Jan 30', account: 'Accounts Payable'}] },
+    "Cash": { debits: [{amount: 20000, date: 'Jan 20', account: 'Commission Revenue'}], credits: [{amount: 60000, date: 'Jan 7', account: 'Purchases'}, {amount: 5000, date: 'Jan 15', account: 'Rent'}, {amount: 2000, date: 'Jan 25', account: 'Drawings'}] },
+    "Purchases": { debits: [{amount: 60000, date: 'Jan 7', account: 'Cash'}], credits: [] },
+    "Machinery": { debits: [{amount: 12000, date: 'Jan 9', account: 'Accounts Payable'}], credits: [] },
+    "Accounts Payable": { debits: [{amount: 12000, date: 'Jan 30', account: 'Bank'}], credits: [{amount: 12000, date: 'Jan 9', account: 'Machinery'}] },
+    "Capital": { debits: [], credits: [{amount: 100000, date: 'Jan 1', account: 'Bank'}] },
+    "Rent": { debits: [{amount: 5000, date: 'Jan 15', account: 'Cash'}], credits: [] },
+    "Commission Revenue": { debits: [], credits: [{amount: 20000, date: 'Jan 20', account: 'Cash'}] },
+    "Drawings": { debits: [{amount: 2000, date: 'Jan 25', account: 'Cash'}], credits: [] },
 };
 
 export default function ScenarioStartPage() {
@@ -58,7 +54,7 @@ export default function ScenarioStartPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <TAccountsLedger initialAccounts={initialAccounts} solution={correctLedger} />
+                    <TAccountsLedger solution={correctLedger} />
                 </CardContent>
             </Card>
         </div>

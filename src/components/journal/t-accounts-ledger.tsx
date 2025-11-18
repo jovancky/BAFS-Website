@@ -16,6 +16,12 @@ type LedgerEntry = {
     amount: number;
 };
 
+type SolutionEntry = {
+    amount: number;
+    date: string;
+    account: string;
+}
+
 type TAccount = {
     id: number;
     name: string;
@@ -25,13 +31,12 @@ type TAccount = {
 
 type SolutionLedger = {
     [account: string]: {
-        debits: number[];
-        credits: number[];
+        debits: SolutionEntry[];
+        credits: SolutionEntry[];
     };
 };
 
 type TAccountsLedgerProps = {
-    initialAccounts: string[];
     solution: SolutionLedger;
 };
 
@@ -45,7 +50,7 @@ type ErrorState = {
 const createEmptyEntry = (): LedgerEntry => ({ id: Date.now() + Math.random(), date: '', accountName: '', amount: 0 });
 
 const SolutionDisplay = ({ solution }: { solution: SolutionLedger }) => {
-    const calculateTotal = (entries: number[]) => entries.reduce((sum, current) => sum + current, 0).toFixed(2);
+    const calculateTotal = (entries: SolutionEntry[]) => entries.reduce((sum, current) => sum + current.amount, 0).toFixed(2);
 
     return (
         <Card className="mt-6 bg-green-500/5 border-green-500/20">
@@ -65,14 +70,32 @@ const SolutionDisplay = ({ solution }: { solution: SolutionLedger }) => {
                             <div className="grid grid-cols-2">
                                 <div className="border-r p-2">
                                     <p className="text-xs text-muted-foreground text-center p-2 border-b">Debit</p>
-                                    {accountData.debits.filter(amount => amount > 0).map((amount, i) => (
-                                        <div key={i} className="text-right text-sm py-1 pr-2">{amount.toFixed(2)}</div>
+                                     <div className="grid grid-cols-3 gap-1 mb-1 text-xs text-muted-foreground text-center">
+                                        <span>Date</span>
+                                        <span>Account</span>
+                                        <span className="text-right pr-2">Amount</span>
+                                    </div>
+                                    {accountData.debits.filter(entry => entry.amount > 0).map((entry, i) => (
+                                        <div key={i} className="grid grid-cols-3 gap-1 text-sm py-1">
+                                            <span className="text-center">{entry.date}</span>
+                                            <span className="text-center">{entry.account}</span>
+                                            <span className="text-right pr-2">{entry.amount.toFixed(2)}</span>
+                                        </div>
                                     ))}
                                 </div>
                                 <div className="p-2">
                                     <p className="text-xs text-muted-foreground text-center p-2 border-b">Credit</p>
-                                     {accountData.credits.filter(amount => amount > 0).map((amount, i) => (
-                                        <div key={i} className="text-right text-sm py-1 pr-2">{amount.toFixed(2)}</div>
+                                    <div className="grid grid-cols-3 gap-1 mb-1 text-xs text-muted-foreground text-center">
+                                        <span>Date</span>
+                                        <span>Account</span>
+                                        <span className="text-right pr-2">Amount</span>
+                                    </div>
+                                     {accountData.credits.filter(entry => entry.amount > 0).map((entry, i) => (
+                                        <div key={i} className="grid grid-cols-3 gap-1 text-sm py-1">
+                                            <span className="text-center">{entry.date}</span>
+                                            <span className="text-center">{entry.account}</span>
+                                            <span className="text-right pr-2">{entry.amount.toFixed(2)}</span>
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -89,7 +112,7 @@ const SolutionDisplay = ({ solution }: { solution: SolutionLedger }) => {
 };
 
 
-export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerProps) {
+export function TAccountsLedger({ solution }: TAccountsLedgerProps) {
     const createEmptyTAccount = (id: number, name = ''): TAccount => ({
         id,
         name,
@@ -187,8 +210,8 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         
         // Sum of all correct debit/credit values + one point for each correct account
         const solutionTotalValue = Object.values(solution).reduce((sum, acc) => {
-            const debitsSum = acc.debits.reduce((s, v) => s + v, 0);
-            const creditsSum = acc.credits.reduce((s, v) => s + v, 0);
+            const debitsSum = acc.debits.reduce((s, v) => s + v.amount, 0);
+            const creditsSum = acc.credits.reduce((s, v) => s + v.amount, 0);
             return sum + debitsSum + creditsSum;
         }, 0);
         const totalMarks = Object.keys(solution).length + solutionTotalValue;
@@ -197,16 +220,22 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
              newErrors.general = `The ledger is not balanced. Total Debits ($${totalDebits.toFixed(2)}) do not equal Total Credits ($${totalCredits.toFixed(2)}).`;
         }
-        else if (totalDebits.toFixed(2) !== Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v, 0).toFixed(2)) {
-            const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v, 0);
+        else if (totalDebits.toFixed(2) !== Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v.amount, 0).toFixed(2)) {
+            const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v.amount, 0);
             newErrors.general = `The total debits and credits ($${totalDebits.toFixed(2)}) do not match the correct total of $${solutionTotalDebits.toFixed(2)}. Please review your entries.`;
         }
 
-        const normalizedSolution: SolutionLedger = {};
+        type NormalizedSolution = {
+            [account: string]: {
+                debits: {amount: number}[],
+                credits: {amount: number}[]
+            }
+        }
+        const normalizedSolution: NormalizedSolution = {};
         Object.keys(solution).forEach(key => {
             normalizedSolution[key.toLowerCase()] = {
-                debits: solution[key].debits.filter(d => d > 0).sort((a,b) => a-b),
-                credits: solution[key].credits.filter(c => c > 0).sort((a,b) => a-b),
+                debits: solution[key].debits.filter(d => d.amount > 0).map(d => ({amount: d.amount})).sort((a,b) => a.amount-b.amount),
+                credits: solution[key].credits.filter(c => c.amount > 0).map(c => ({amount: c.amount})).sort((a,b) => a.amount-b.amount),
             }
         });
 
@@ -224,22 +253,26 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                 const solutionAccount = normalizedSolution[solKey];
 
                 const userDebits = userAccount.debits.map(d => d.amount).filter(d => d > 0).sort((a,b) => a-b);
-                if (JSON.stringify(userDebits) === JSON.stringify(solutionAccount.debits)) {
-                    correctDebitsValue += solutionAccount.debits.reduce((s,v) => s + v, 0);
+                const solutionDebitAmounts = solutionAccount.debits.map(d => d.amount);
+
+                if (JSON.stringify(userDebits) === JSON.stringify(solutionDebitAmounts)) {
+                    correctDebitsValue += solutionDebitAmounts.reduce((s,v) => s + v, 0);
                 } else {
                     userAccount.debits.forEach(entry => {
-                         if(entry.amount > 0 && !solutionAccount.debits.includes(entry.amount)) {
+                         if(entry.amount > 0 && !solutionDebitAmounts.includes(entry.amount)) {
                              if(newErrors.entries) newErrors.entries[entry.id] = { amount: true };
                          }
                     })
                 }
 
                 const userCredits = userAccount.credits.map(c => c.amount).filter(c => c > 0).sort((a,b) => a-b);
-                if (JSON.stringify(userCredits) === JSON.stringify(solutionAccount.credits)) {
-                    correctCreditsValue += solutionAccount.credits.reduce((s, v) => s + v, 0);
+                const solutionCreditAmounts = solutionAccount.credits.map(c => c.amount);
+
+                if (JSON.stringify(userCredits) === JSON.stringify(solutionCreditAmounts)) {
+                    correctCreditsValue += solutionCreditAmounts.reduce((s, v) => s + v, 0);
                 } else {
                      userAccount.credits.forEach(entry => {
-                         if(entry.amount > 0 && !solutionAccount.credits.includes(entry.amount)) {
+                         if(entry.amount > 0 && !solutionCreditAmounts.includes(entry.amount)) {
                              if(newErrors.entries) newErrors.entries[entry.id] = { amount: true };
                          }
                     })

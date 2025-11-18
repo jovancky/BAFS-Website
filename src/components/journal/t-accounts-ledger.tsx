@@ -38,7 +38,7 @@ type SolutionLedger = {
 
 type TAccountsLedgerProps = {
     solution: SolutionLedger;
-    onLedgerSubmit: () => void;
+    onLedgerSubmit: (isCorrect: boolean) => void;
 };
 
 type ErrorState = {
@@ -191,7 +191,6 @@ export function TAccountsLedger({ solution, onLedgerSubmit }: TAccountsLedgerPro
     };
 
     const handleSubmit = () => {
-        onLedgerSubmit();
         setErrors({});
         setShowSolution(false);
         let newErrors: ErrorState = { accounts: {}, entries: {} };
@@ -202,7 +201,9 @@ export function TAccountsLedger({ solution, onLedgerSubmit }: TAccountsLedgerPro
         let totalCredits = 0;
 
         const accountAliases: {[key: string]: string[]} = {
-            'accounts payable: advance machinery company': ['trade payables: advance machinery company', 'other payables: advance machinery company', 'non-trade payables: advance machinery company', 'accounts payable'],
+            'trade payables: tech supplies inc.': ['accounts payable: tech supplies inc.'],
+            'trade receivables: the gadget hub': ['accounts receivable: the gadget hub'],
+            'other payables: advance machinery company': ['accounts payable: advance machinery company', 'non-trade payables: advance machinery company', 'accounts payable'],
         };
 
         const getCanonicalName = (name: string) => {
@@ -250,7 +251,7 @@ export function TAccountsLedger({ solution, onLedgerSubmit }: TAccountsLedgerPro
         }
         const normalizedSolution: NormalizedSolution = {};
         Object.keys(solution).forEach(key => {
-            normalizedSolution[key.toLowerCase()] = {
+            normalizedSolution[getCanonicalName(key)] = {
                 debits: solution[key].debits.filter(d => d.amount > 0).map(d => ({amount: d.amount})).sort((a,b) => a.amount-b.amount),
                 credits: solution[key].credits.filter(c => c.amount > 0).map(c => ({amount: c.amount})).sort((a,b) => a.amount-b.amount),
             }
@@ -308,8 +309,9 @@ export function TAccountsLedger({ solution, onLedgerSubmit }: TAccountsLedgerPro
         
         userScore = correctAccountsValue + correctDebitsValue + correctCreditsValue;
         newErrors.score = { user: userScore, total: totalMarks };
+        const isCorrect = !newErrors.general && userScore === totalMarks;
 
-        if(!newErrors.general && userScore === totalMarks) {
+        if(isCorrect) {
             newErrors.general = 'Correct! All accounts are posted perfectly.'
         } else if (!newErrors.general) {
             newErrors.general = 'Some entries are incorrect. Compare with the solution below.'
@@ -319,6 +321,7 @@ export function TAccountsLedger({ solution, onLedgerSubmit }: TAccountsLedgerPro
         }
         
         setErrors(newErrors);
+        onLedgerSubmit(isCorrect);
     };
 
     const renderSide = (accountId: number, side: 'debits' | 'credits') => (

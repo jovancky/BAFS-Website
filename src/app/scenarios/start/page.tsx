@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TAccountsLedger } from '@/components/journal/t-accounts-ledger';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const scenarios = [
     {
@@ -62,17 +63,23 @@ export default function ScenarioStartPage() {
     const [scenarioIndex, setScenarioIndex] = useState(0);
     const [key, setKey] = useState(Date.now());
     const [submitted, setSubmitted] = useState(false);
+    const [isCorrect, setIsCorrect] = useState(false);
 
     const scenario = scenarios[scenarioIndex];
+    const isLastQuestion = scenarioIndex === scenarios.length - 1;
 
     const handleNextQuestion = () => {
-        setScenarioIndex((prevIndex) => (prevIndex + 1) % scenarios.length);
-        setKey(Date.now()); 
-        setSubmitted(false);
+        if (!isLastQuestion) {
+            setScenarioIndex((prevIndex) => prevIndex + 1);
+            setKey(Date.now()); 
+            setSubmitted(false);
+            setIsCorrect(false);
+        }
     };
 
-    const onLedgerSubmit = () => {
+    const onLedgerSubmit = (correct: boolean) => {
         setSubmitted(true);
+        setIsCorrect(correct);
     };
 
     return (
@@ -111,9 +118,19 @@ export default function ScenarioStartPage() {
 
             {submitted && (
                  <div className="flex justify-end">
-                    <Button onClick={handleNextQuestion} disabled={!submitted}>
-                        Next Question <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    {isLastQuestion && isCorrect ? (
+                        <Card className="bg-green-500/10 border-green-500/20 p-4 flex flex-col items-center gap-2">
+                             <CheckCircle className="h-8 w-8 text-green-500"/>
+                            <p className="font-semibold text-green-500">You've completed all scenarios!</p>
+                            <Link href="/scenarios" passHref>
+                                <Button variant="outline">Back to Scenarios</Button>
+                            </Link>
+                        </Card>
+                    ) : (
+                        <Button onClick={handleNextQuestion} disabled={!submitted}>
+                            Next Question <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    )}
                 </div>
             )}
         </div>

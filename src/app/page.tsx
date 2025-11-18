@@ -1,10 +1,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, BrainCircuit } from 'lucide-react';
+import { ArrowRight, BookOpen, Compass } from 'lucide-react';
 import Link from 'next/link';
-import ProgressChart from '@/components/dashboard/progress-chart';
-import LeaderboardPreview from '@/components/dashboard/leaderboard-preview';
 
 export default function Home() {
   return (
@@ -16,65 +14,39 @@ export default function Home() {
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Your Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ProgressChart />
-          </CardContent>
-        </Card>
-        <div className="flex flex-col gap-6">
-          <Card>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Card>
             <CardHeader>
-              <CardTitle>Daily Challenge</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <h3 className="font-semibold">Trial Balance Challenge</h3>
-              <p className="text-sm text-muted-foreground mb-4">Balance the books in record time!</p>
-              <Button className="w-full">Start Challenge <ArrowRight className="ml-2 h-4 w-4" /></Button>
-            </CardContent>
-          </Card>
-          <Card className="bg-primary/10 border-primary/40">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <BrainCircuit className="text-primary"/>
-                    <span>Personalized Path</span>
+                <CardTitle className="flex items-center gap-3">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                    <span>Interactive Journal Entry</span>
                 </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">Your AI Tutor has a new learning path ready for you based on your recent activity.</p>
-              <Link href="/tutor" passHref legacyBehavior><Button variant="outline" className="w-full bg-background">View Path <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-         <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Continue Learning</CardTitle>
-                <Link href="/scenarios" className="text-sm font-medium text-primary hover:underline">View All</Link>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-                <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
-                    <div>
-                        <h4 className="font-semibold">Scenario: Starting a Business</h4>
-                        <p className="text-sm text-muted-foreground">Master the initial transactions of a new venture.</p>
-                    </div>
-                    <Button variant="ghost" size="icon"><ArrowRight/></Button>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
-                    <div>
-                        <h4 className="font-semibold">Quiz: Debits &amp; Credits</h4>
-                        <p className="text-sm text-muted-foreground">Test your fundamental knowledge.</p>
-                    </div>
-                     <Button variant="ghost" size="icon"><ArrowRight/></Button>
-                </div>
+              <p className="text-muted-foreground mb-4">Practice recording transactions with real-time feedback to master the art of debits and credits.</p>
+              <Button asChild className="w-full">
+                <Link href="/journal">
+                    Start Journaling <ArrowRight className="ml-2" />
+                </Link>
+              </Button>
             </CardContent>
         </Card>
-        <LeaderboardPreview />
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                    <Compass className="h-6 w-6 text-primary" />
+                    <span>Real-world Scenarios</span>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground mb-4">Apply your knowledge by posting transactions from various business scenarios to the general ledger.</p>
+                 <Button asChild className="w-full">
+                    <Link href="/scenarios">
+                        Explore Scenarios <ArrowRight className="ml-2" />
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
       </div>
     </div>
   );

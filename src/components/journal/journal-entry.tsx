@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -18,6 +19,7 @@ type AnswerLine = Omit<JournalLine, 'id'>;
 type JournalEntryProps = {
     scenario?: string;
     answer?: AnswerLine[];
+    onSubmission?: (isCorrect: boolean) => void;
 };
 
 const defaultAnswer: AnswerLine[] = [
@@ -25,7 +27,11 @@ const defaultAnswer: AnswerLine[] = [
     { account: 'Cash', debit: '', credit: '1200' }
 ];
 
-export function JournalEntry({ scenario = "The company paid $1,200 for monthly office rent by cash.", answer = defaultAnswer }: JournalEntryProps) {
+export function JournalEntry({ 
+    scenario = "The company paid $1,200 for monthly office rent by cash.", 
+    answer = defaultAnswer,
+    onSubmission
+}: JournalEntryProps) {
     const [lines, setLines] = useState<JournalLine[]>([
         { id: 1, account: '', debit: '', credit: '' },
         { id: 2, account: '', debit: '', credit: '' },
@@ -50,13 +56,17 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
         const totalDebits = lines.reduce((sum, line) => sum + (parseFloat(line.debit) || 0), 0);
         const totalCredits = lines.reduce((sum, line) => sum + (parseFloat(line.credit) || 0), 0);
         
+        let isCorrect = false;
+
         if (totalDebits === 0 && totalCredits === 0) {
             setFeedback({ type: 'error', message: "Please enter debit and credit amounts."});
+            if(onSubmission) onSubmission(false);
             return;
         }
 
         if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
             setFeedback({ type: 'error', message: `Debits (${totalDebits.toFixed(2)}) do not equal Credits (${totalCredits.toFixed(2)}).` });
+            if(onSubmission) onSubmission(false);
             return;
         }
 
@@ -71,10 +81,11 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
 
             if (userEntry.length !== correctAnswer.length) {
                 setFeedback({ type: 'error', message: 'Incorrect number of accounts used. Please review your entry.' });
+                if(onSubmission) onSubmission(false);
                 return;
             }
 
-            const isCorrect = correctAnswer.every(correctLine => {
+            const isPerfectMatch = correctAnswer.every(correctLine => {
                 return userEntry.some(userLine =>
                     userLine.account.toLowerCase() === correctLine.account.toLowerCase() &&
                     userLine.debit === correctLine.debit &&
@@ -82,14 +93,20 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
                 );
             });
 
-            if (isCorrect) {
+            if (isPerfectMatch && userEntry.length === correctAnswer.length) {
                 setFeedback({ type: 'success', message: 'Correct! Transaction recorded successfully.' });
+                isCorrect = true;
             } else {
                 setFeedback({ type: 'error', message: 'The accounts or amounts are incorrect. Please try again.' });
             }
         } else {
              // Fallback for when no answer is provided
             setFeedback({ type: 'success', message: 'Transaction is balanced! Well done.' });
+            isCorrect = true;
+        }
+
+        if(onSubmission) {
+            onSubmission(isCorrect);
         }
     };
 
@@ -117,6 +134,7 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
                                         placeholder="Enter account name"
                                         value={line.account}
                                         onChange={(e) => handleLineChange(line.id, 'account', e.target.value)}
+                                        disabled={feedback?.type === 'success'}
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -127,6 +145,7 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
                                         value={line.debit}
                                         onChange={(e) => handleLineChange(line.id, 'debit', e.target.value)}
                                         onFocus={() => handleLineChange(line.id, 'credit', '')}
+                                        disabled={feedback?.type === 'success'}
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -137,10 +156,11 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
                                         value={line.credit}
                                         onChange={(e) => handleLineChange(line.id, 'credit', e.target.value)}
                                         onFocus={() => handleLineChange(line.id, 'debit', '')}
+                                        disabled={feedback?.type === 'success'}
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveLine(line.id)} disabled={lines.length <= 2}>
+                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveLine(line.id)} disabled={lines.length <= 2 || feedback?.type === 'success'}>
                                         <Trash2 className="h-4 w-4 text-muted-foreground" />
                                     </Button>
                                 </TableCell>
@@ -150,10 +170,10 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
                 </Table>
             </div>
             <div className="flex items-center justify-between">
-                <Button variant="outline" onClick={handleAddLine}>
+                <Button variant="outline" onClick={handleAddLine} disabled={feedback?.type === 'success'}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Line
                 </Button>
-                <Button onClick={handleSubmit}>Submit Entry</Button>
+                <Button onClick={handleSubmit} disabled={feedback?.type === 'success'}>Submit Entry</Button>
             </div>
             {feedback && (
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}>

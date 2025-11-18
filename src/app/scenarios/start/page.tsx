@@ -61,12 +61,18 @@ const scenarios = [
 export default function ScenarioStartPage() {
     const [scenarioIndex, setScenarioIndex] = useState(0);
     const [key, setKey] = useState(Date.now());
+    const [submitted, setSubmitted] = useState(false);
 
     const scenario = scenarios[scenarioIndex];
 
     const handleNextQuestion = () => {
         setScenarioIndex((prevIndex) => (prevIndex + 1) % scenarios.length);
         setKey(Date.now()); 
+        setSubmitted(false);
+    };
+
+    const onLedgerSubmit = () => {
+        setSubmitted(true);
     };
 
     return (
@@ -99,15 +105,17 @@ export default function ScenarioStartPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <TAccountsLedger key={key} solution={scenario.solution} />
+                    <TAccountsLedger key={key} solution={scenario.solution} onLedgerSubmit={onLedgerSubmit} />
                 </CardContent>
             </Card>
 
-            <div className="flex justify-end">
-                <Button onClick={handleNextQuestion}>
-                    Next Question <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-            </div>
+            {submitted && (
+                 <div className="flex justify-end">
+                    <Button onClick={handleNextQuestion} disabled={!submitted}>
+                        Next Question <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }

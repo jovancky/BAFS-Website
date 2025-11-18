@@ -38,6 +38,7 @@ type SolutionLedger = {
 
 type TAccountsLedgerProps = {
     solution: SolutionLedger;
+    onLedgerSubmit: () => void;
 };
 
 type ErrorState = {
@@ -112,7 +113,7 @@ const SolutionDisplay = ({ solution }: { solution: SolutionLedger }) => {
 };
 
 
-export function TAccountsLedger({ solution }: TAccountsLedgerProps) {
+export function TAccountsLedger({ solution, onLedgerSubmit }: TAccountsLedgerProps) {
     const createEmptyTAccount = (id: number, name = ''): TAccount => ({
         id,
         name,
@@ -190,6 +191,7 @@ export function TAccountsLedger({ solution }: TAccountsLedgerProps) {
     };
 
     const handleSubmit = () => {
+        onLedgerSubmit();
         setErrors({});
         setShowSolution(false);
         let newErrors: ErrorState = { accounts: {}, entries: {} };

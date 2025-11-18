@@ -8,7 +8,7 @@ const transactions = [
     { date: "Jan 15", description: "Paid rent by cash $5,000." },
     { date: "Jan 20", description: "Provided services to a client and received $20,000 cash." },
     { date: "Jan 25", description: "Owner took $2,000 cash for personal use." },
-    { date: "Jan 30", description: "Paid Advance Machinery Company in full." },
+    { date: "Jan 30", description: "Paid Advance Machinery Company in full by cheque." },
 ];
 
 const initialAccounts = [
@@ -16,8 +16,8 @@ const initialAccounts = [
 ];
 
 const correctLedger = {
-    "Bank": { debits: [100000], credits: [] },
-    "Cash": { debits: [20000], credits: [60000, 5000, 2000, 12000] },
+    "Bank": { debits: [100000], credits: [12000] },
+    "Cash": { debits: [20000], credits: [60000, 5000, 2000] },
     "Purchases": { debits: [60000], credits: [] },
     "Machinery": { debits: [12000], credits: [] },
     "Accounts Payable": { debits: [12000], credits: [12000] },

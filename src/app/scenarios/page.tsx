@@ -163,7 +163,7 @@ export default function ScenariosPage() {
                 </CardContent>
             </Card>
 
-            {submitted && (
+            {(submitted || !isCorrect) && (
                  <div className="flex justify-end">
                     {isLastQuestion && isCorrect ? (
                         <Card className="bg-green-500/10 border-green-500/20 p-4 flex flex-col items-center gap-2">
@@ -174,7 +174,7 @@ export default function ScenariosPage() {
                             </Link>
                         </Card>
                     ) : (
-                        <Button onClick={handleNextQuestion} disabled={isLastQuestion || !isCorrect}>
+                        <Button onClick={handleNextQuestion} disabled={isLastQuestion}>
                             Next Scenario <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     )}

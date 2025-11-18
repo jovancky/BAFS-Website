@@ -79,7 +79,7 @@ export default function JournalPage() {
                 </CardContent>
             </Card>
 
-            {isSubmitted && isCorrect && (
+            {isSubmitted && (
                  <div className="flex justify-end">
                     {isLastQuestion ? (
                         <Card className="bg-green-500/10 border-green-500/20 p-4 flex flex-col items-center gap-2">

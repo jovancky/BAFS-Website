@@ -24,9 +24,9 @@ const journalScenarios = [
         ]
     },
     {
-        scenario: "Purchased office supplies worth $750 on credit from 'Supplies Co.'",
+        scenario: "Purchased office equipment worth $750 on credit from 'Supplies Co.'",
         answer: [
-            { account: 'Office Supplies', debit: '750', credit: '' },
+            { account: 'Office Equipment', debit: '750', credit: '' },
             { account: 'Accounts Payable', debit: '', credit: '750' }
         ]
     },

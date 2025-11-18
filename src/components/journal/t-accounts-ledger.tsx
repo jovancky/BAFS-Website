@@ -200,18 +200,19 @@ export function TAccountsLedger({ solution }: TAccountsLedgerProps) {
         let totalCredits = 0;
 
         const accountAliases: {[key: string]: string[]} = {
-            'accounts payable': ['trade payables', 'other payables', 'non-trade payables']
+            'accounts payable: advance machinery company': ['trade payables: advance machinery company', 'other payables: advance machinery company', 'non-trade payables: advance machinery company', 'accounts payable'],
         };
 
         const getCanonicalName = (name: string) => {
             const lowerName = name.trim().toLowerCase();
             for (const canonical in accountAliases) {
-                if (accountAliases[canonical].includes(lowerName)) {
+                if (accountAliases[canonical].includes(lowerName) || canonical === lowerName) {
                     return canonical;
                 }
             }
             return lowerName;
         };
+        
 
         accounts.forEach(acc => {
             if (acc.name.trim()) {

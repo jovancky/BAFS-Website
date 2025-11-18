@@ -12,11 +12,11 @@ const transactions = [
 ];
 
 const correctLedger = {
-    "Bank": { debits: [{amount: 100000, date: 'Jan 1', account: 'Capital'}], credits: [{amount: 12000, date: 'Jan 30', account: 'Accounts Payable'}] },
+    "Bank": { debits: [{amount: 100000, date: 'Jan 1', account: 'Capital'}], credits: [{amount: 12000, date: 'Jan 30', account: 'Accounts Payable: Advance Machinery Company'}] },
     "Cash": { debits: [{amount: 20000, date: 'Jan 20', account: 'Commission Revenue'}], credits: [{amount: 60000, date: 'Jan 7', account: 'Purchases'}, {amount: 5000, date: 'Jan 15', account: 'Rent'}, {amount: 2000, date: 'Jan 25', account: 'Drawings'}] },
     "Purchases": { debits: [{amount: 60000, date: 'Jan 7', account: 'Cash'}], credits: [] },
-    "Machinery": { debits: [{amount: 12000, date: 'Jan 9', account: 'Accounts Payable'}], credits: [] },
-    "Accounts Payable": { debits: [{amount: 12000, date: 'Jan 30', account: 'Bank'}], credits: [{amount: 12000, date: 'Jan 9', account: 'Machinery'}] },
+    "Machinery": { debits: [{amount: 12000, date: 'Jan 9', account: 'Accounts Payable: Advance Machinery Company'}], credits: [] },
+    "Accounts Payable: Advance Machinery Company": { debits: [{amount: 12000, date: 'Jan 30', account: 'Bank'}], credits: [{amount: 12000, date: 'Jan 9', account: 'Machinery'}] },
     "Capital": { debits: [], credits: [{amount: 100000, date: 'Jan 1', account: 'Bank'}] },
     "Rent": { debits: [{amount: 5000, date: 'Jan 15', account: 'Cash'}], credits: [] },
     "Commission Revenue": { debits: [], credits: [{amount: 20000, date: 'Jan 20', account: 'Cash'}] },

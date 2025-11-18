@@ -14,8 +14,11 @@ type JournalLine = {
     credit: string;
 };
 
+type AnswerLine = Omit<JournalLine, 'id'>;
+
 type JournalEntryProps = {
     scenario?: string;
+    answer?: AnswerLine[];
 };
 
 const accounts = [
@@ -26,7 +29,12 @@ const accounts = [
     'Expenses', 'Rent Expense', 'Salaries Expense', 'Purchases'
 ];
 
-export function JournalEntry({ scenario = "The company paid $1,200 for monthly office rent." }: JournalEntryProps) {
+const defaultAnswer: AnswerLine[] = [
+    { account: 'Rent Expense', debit: '1200', credit: '' },
+    { account: 'Cash', debit: '', credit: '1200' }
+];
+
+export function JournalEntry({ scenario = "The company paid $1,200 for monthly office rent.", answer = defaultAnswer }: JournalEntryProps) {
     const [lines, setLines] = useState<JournalLine[]>([
         { id: 1, account: '', debit: '', credit: '' },
         { id: 2, account: '', debit: '', credit: '' },
@@ -58,7 +66,38 @@ export function JournalEntry({ scenario = "The company paid $1,200 for monthly o
 
         if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
             setFeedback({ type: 'error', message: `Debits (${totalDebits.toFixed(2)}) do not equal Credits (${totalCredits.toFixed(2)}).` });
+            return;
+        }
+
+        if (answer) {
+            const userEntry = lines
+                .map(({ account, debit, credit }) => ({ account, debit: parseFloat(debit) || 0, credit: parseFloat(credit) || 0 }))
+                .filter(l => l.account && (l.debit > 0 || l.credit > 0));
+
+            const correctAnswer = answer
+                .map(({ account, debit, credit }) => ({ account, debit: parseFloat(debit) || 0, credit: parseFloat(credit) || 0 }))
+                .filter(l => l.account && (l.debit > 0 || l.credit > 0));
+
+            if (userEntry.length !== correctAnswer.length) {
+                setFeedback({ type: 'error', message: 'Incorrect number of accounts used. Please review your entry.' });
+                return;
+            }
+
+            const isCorrect = correctAnswer.every(correctLine => {
+                return userEntry.some(userLine =>
+                    userLine.account === correctLine.account &&
+                    userLine.debit === correctLine.debit &&
+                    userLine.credit === correctLine.credit
+                );
+            });
+
+            if (isCorrect) {
+                setFeedback({ type: 'success', message: 'Correct! Transaction recorded successfully.' });
+            } else {
+                setFeedback({ type: 'error', message: 'The accounts or amounts are incorrect. Please try again.' });
+            }
         } else {
+             // Fallback for when no answer is provided
             setFeedback({ type: 'success', message: 'Transaction is balanced! Well done.' });
         }
     };

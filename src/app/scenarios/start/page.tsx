@@ -2,8 +2,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { JournalEntry } from '@/components/journal/journal-entry';
 
 const transactions = [
-    { date: "Jan 7", description: "Purchased goods for $60,000 in cash." },
-    { date: "Jan 9", description: "Purchased a machine on credit from Advance Machinery Company for $12,000." },
+    { 
+        date: "Jan 7", 
+        description: "Purchased goods for $60,000 in cash.",
+        answer: [
+            { account: 'Purchases', debit: '60000', credit: '' },
+            { account: 'Cash', debit: '', credit: '60000' }
+        ]
+    },
+    { 
+        date: "Jan 9", 
+        description: "Purchased a machine on credit from Advance Machinery Company for $12,000.",
+        answer: [
+            { account: 'Machinery', debit: '12000', credit: '' },
+            { account: 'Accounts Payable', debit: '', credit: '12000' }
+        ]
+    },
 ];
 
 export default function ScenarioStartPage() {
@@ -21,7 +35,7 @@ export default function ScenarioStartPage() {
                         <CardDescription>{transaction.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <JournalEntry scenario={transaction.description} />
+                        <JournalEntry scenario={transaction.description} answer={transaction.answer} />
                     </CardContent>
                 </Card>
             ))}

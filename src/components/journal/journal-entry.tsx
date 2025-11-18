@@ -14,13 +14,19 @@ type JournalLine = {
     credit: string;
 };
 
+type JournalEntryProps = {
+    scenario?: string;
+};
+
 const accounts = [
-    'Cash', 'Accounts Receivable', 'Inventory', 'Prepaid Rent', 'Equipment',
-    'Accounts Payable', 'Salaries Payable', 'Unearned Revenue', 'Notes Payable',
-    'Common Stock', 'Retained Earnings', 'Service Revenue', 'Rent Expense', 'Salaries Expense'
+    'Cash', 'Bank', 'Accounts Receivable', 'Inventory', 'Prepaid Rent', 'Equipment', 'Machinery',
+    'Accounts Payable', 'Trade Payables', 'Salaries Payable', 'Unearned Revenue', 'Notes Payable',
+    'Capital', 'Drawings',
+    'Revenue', 'Service Revenue',
+    'Expenses', 'Rent Expense', 'Salaries Expense', 'Purchases'
 ];
 
-export function JournalEntry() {
+export function JournalEntry({ scenario = "The company paid $1,200 for monthly office rent." }: JournalEntryProps) {
     const [lines, setLines] = useState<JournalLine[]>([
         { id: 1, account: '', debit: '', credit: '' },
         { id: 2, account: '', debit: '', credit: '' },
@@ -61,7 +67,7 @@ export function JournalEntry() {
         <div className="space-y-6">
             <div className="p-4 bg-secondary/50 rounded-lg">
                 <p className="font-semibold">Transaction Scenario:</p>
-                <p className="text-muted-foreground">The company paid $1,200 for monthly office rent.</p>
+                <p className="text-muted-foreground">{scenario}</p>
             </div>
             <div className="overflow-x-auto">
                 <Table>

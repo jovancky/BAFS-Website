@@ -1,29 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Briefcase, Building2, ShoppingCart } from 'lucide-react';
+import { ArrowRight, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 
 const scenarios = [
     {
         title: 'Starting a Small Business',
-        description: 'Navigate the initial financial steps of launching a new coffee shop.',
+        description: 'Navigate the initial financial steps of launching a new venture.',
         icon: Briefcase,
         tags: ['Beginner', 'Equity', 'Assets'],
-        link: '#'
-    },
-    {
-        title: 'Inventory Purchase and Sale',
-        description: 'Manage inventory for a retail store, from purchase to sale.',
-        icon: ShoppingCart,
-        tags: ['Intermediate', 'COGS', 'Revenue'],
-        link: '#'
-    },
-    {
-        title: 'Handling Depreciation',
-        description: 'Learn how to account for the depreciation of long-term assets.',
-        icon: Building2,
-        tags: ['Advanced', 'Depreciation', 'Expenses'],
-        link: '#'
+        link: '/scenarios/start'
     }
 ];
 

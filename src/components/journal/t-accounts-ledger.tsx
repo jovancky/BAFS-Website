@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CheckCircle, XCircle, PlusCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 type LedgerEntry = {
     id: number;
@@ -13,15 +14,11 @@ type LedgerEntry = {
     amount: number;
 };
 
-type LedgerSide = {
-    entries: LedgerEntry[];
-};
-
 type TAccount = {
     id: number;
     name: string;
-    debits: LedgerSide;
-    credits: LedgerSide;
+    debits: LedgerEntry[];
+    credits: LedgerEntry[];
 };
 
 type SolutionLedger = {
@@ -36,25 +33,38 @@ type TAccountsLedgerProps = {
     solution: SolutionLedger;
 };
 
+type ErrorState = {
+    accounts?: { [id: number]: string | undefined };
+    entries?: { [entryId: number]: { amount?: boolean, general?: boolean } };
+    general?: string;
+    score?: { user: number, total: number };
+};
+
 const createEmptyEntry = (): LedgerEntry => ({ id: Date.now() + Math.random(), date: '', accountName: '', amount: 0 });
 
 export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerProps) {
     const createEmptyTAccount = (id: number, name = ''): TAccount => ({
         id,
         name,
-        debits: { entries: [createEmptyEntry()] },
-        credits: { entries: [createEmptyEntry()] },
+        debits: [createEmptyEntry()],
+        credits: [createEmptyEntry()],
     });
 
-    const [accounts, setAccounts] = useState<TAccount[]>(() => 
+    const [accounts, setAccounts] = useState<TAccount[]>(() =>
         Array.from({ length: 1 }, (_, i) => createEmptyTAccount(i + 1))
     );
-    const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+    const [errors, setErrors] = useState<ErrorState>({});
 
     const handleAccountNameChange = (id: number, newName: string) => {
         setAccounts(prevAccounts =>
             prevAccounts.map(acc => (acc.id === id ? { ...acc, name: newName } : acc))
         );
+        // Clear errors on change
+        if(errors.accounts?.[id]) {
+            const newErrors = {...errors};
+            if(newErrors.accounts) delete newErrors.accounts[id];
+            setErrors(newErrors);
+        }
     };
 
     const handleEntryChange = (
@@ -67,9 +77,8 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
         setAccounts(prevAccounts =>
             prevAccounts.map(acc => {
                 if (acc.id === accountId) {
-                    const newSide = { ...acc[side] };
-                    const newEntries = [...newSide.entries];
-                    const entryToUpdate = { ...newEntries[entryIndex] };
+                    const newSideEntries = [...acc[side]];
+                    const entryToUpdate = { ...newSideEntries[entryIndex] };
 
                     if (field === 'amount') {
                         const numericValue = parseFloat(value as string);
@@ -78,17 +87,25 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                         (entryToUpdate[field] as string) = value as string;
                     }
                     
-                    newEntries[entryIndex] = entryToUpdate;
+                    newSideEntries[entryIndex] = entryToUpdate;
 
-                    if (entryIndex === newEntries.length - 1 && (entryToUpdate.amount !== 0 || entryToUpdate.date || entryToUpdate.accountName)) {
-                        newEntries.push(createEmptyEntry());
+                    if (entryIndex === newSideEntries.length - 1 && (entryToUpdate.amount !== 0 || entryToUpdate.date || entryToUpdate.accountName)) {
+                        newSideEntries.push(createEmptyEntry());
                     }
 
-                    return { ...acc, [side]: { entries: newEntries } };
+                    return { ...acc, [side]: newSideEntries };
                 }
                 return acc;
             })
         );
+
+         // Clear errors on change
+        const entryId = accounts.find(a => a.id === accountId)?.[side][entryIndex].id;
+        if(entryId && errors.entries?.[entryId]) {
+            const newErrors = {...errors};
+            if(newErrors.entries) delete newErrors.entries[entryId];
+            setErrors(newErrors);
+        }
     };
 
     const addAccount = () => {
@@ -100,30 +117,32 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
     };
 
     const handleSubmit = () => {
-        const userLedger: SolutionLedger = {};
+        setErrors({});
+        let newErrors: ErrorState = { accounts: {}, entries: {} };
+        let userScore = 0;
+
+        const userLedger: { [accountName: string]: TAccount } = {};
         let totalDebits = 0;
         let totalCredits = 0;
 
         accounts.forEach(acc => {
             if (acc.name.trim()) {
-                const debits = acc.debits.entries.filter(e => e.amount > 0).map(e => e.amount);
-                const credits = acc.credits.entries.filter(e => e.amount > 0).map(e => e.amount);
-                userLedger[acc.name.trim().toLowerCase()] = { debits, credits };
-                totalDebits += debits.reduce((s, v) => s + v, 0);
-                totalCredits += credits.reduce((s, v) => s + v, 0);
+                const name = acc.name.trim().toLowerCase();
+                userLedger[name] = acc;
+                totalDebits += acc.debits.reduce((s, e) => s + e.amount, 0);
+                totalCredits += acc.credits.reduce((s, e) => s + e.amount, 0);
             }
         });
-        
-        if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
-             setFeedback({ type: 'error', message: `The ledger is not balanced. Total Debits ($${totalDebits.toFixed(2)}) do not equal Total Credits ($${totalCredits.toFixed(2)}).` });
-             return;
-        }
 
-        const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s,v) => s+v, 0);
-        
-        if (totalDebits.toFixed(2) !== solutionTotalDebits.toFixed(2)) {
-            setFeedback({ type: 'error', message: `The total debits and credits ($${totalDebits.toFixed(2)}) do not match the correct total of $${solutionTotalDebits.toFixed(2)}. Please review your entries.` });
-            return;
+        const solutionTotalDebits = Object.values(solution).flatMap(acc => acc.debits).reduce((s, v) => s + v, 0);
+        const solutionTotalCredits = Object.values(solution).flatMap(acc => acc.credits).reduce((s, v) => s + v, 0);
+        const totalMarks = Object.keys(solution).length + solutionTotalDebits + solutionTotalCredits;
+
+        if (totalDebits.toFixed(2) !== totalCredits.toFixed(2)) {
+             newErrors.general = `The ledger is not balanced. Total Debits ($${totalDebits.toFixed(2)}) do not equal Total Credits ($${totalCredits.toFixed(2)}).`;
+        }
+        else if (totalDebits.toFixed(2) !== solutionTotalDebits.toFixed(2)) {
+            newErrors.general = `The total debits and credits ($${totalDebits.toFixed(2)}) do not match the correct total of $${solutionTotalDebits.toFixed(2)}. Please review your entries.`;
         }
 
         const normalizedSolution: SolutionLedger = {};
@@ -136,39 +155,58 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
 
         const userAccountKeys = Object.keys(userLedger);
         const solutionAccountKeys = Object.keys(normalizedSolution);
+        
+        let correctAccounts = 0;
+        let correctDebits = 0;
+        let correctCredits = 0;
 
-        if (userAccountKeys.length !== solutionAccountKeys.length) {
-             setFeedback({ type: 'error', message: `You have ${userAccountKeys.length} accounts, but there should be ${solutionAccountKeys.length}. Please review the accounts you have created.` });
-             return;
+        solutionAccountKeys.forEach(solKey => {
+            if(userLedger[solKey]) {
+                correctAccounts++;
+                const userAccount = userLedger[solKey];
+                const solutionAccount = normalizedSolution[solKey];
+
+                const userDebits = userAccount.debits.map(d => d.amount).filter(d => d > 0).sort();
+                if (JSON.stringify(userDebits) === JSON.stringify(solutionAccount.debits)) {
+                    correctDebits += solutionAccount.debits.reduce((s,v) => s + v, 0);
+                } else {
+                    userAccount.debits.forEach(entry => {
+                         if(entry.amount > 0 && !solutionAccount.debits.includes(entry.amount)) {
+                             if(newErrors.entries) newErrors.entries[entry.id] = { amount: true };
+                         }
+                    })
+                }
+
+                const userCredits = userAccount.credits.map(c => c.amount).filter(c => c > 0).sort();
+                if (JSON.stringify(userCredits) === JSON.stringify(solutionAccount.credits)) {
+                    correctCredits += solutionAccount.credits.reduce((s, v) => s + v, 0);
+                } else {
+                     userAccount.credits.forEach(entry => {
+                         if(entry.amount > 0 && !solutionAccount.credits.includes(entry.amount)) {
+                             if(newErrors.entries) newErrors.entries[entry.id] = { amount: true };
+                         }
+                    })
+                }
+            }
+        });
+        
+        userAccountKeys.forEach(userKey => {
+            if(!normalizedSolution[userKey]){
+                const wrongAccount = accounts.find(a => a.name.toLowerCase() === userKey);
+                if (wrongAccount && newErrors.accounts) {
+                    newErrors.accounts[wrongAccount.id] = 'Incorrect account or misspelled.';
+                }
+            }
+        });
+        
+        userScore = correctAccounts + correctDebits + correctCredits;
+        newErrors.score = { user: userScore, total: totalMarks };
+
+        if(!newErrors.general && userScore === totalMarks) {
+            newErrors.general = 'Correct! All accounts are posted perfectly.'
         }
         
-        for (const userKey of userAccountKeys) {
-            if (!normalizedSolution[userKey]) {
-                setFeedback({ type: 'error', message: `The account "${accounts.find(a => a.name.toLowerCase() === userKey)?.name}" is not a valid account for this scenario or is misspelled.` });
-                return;
-            }
-
-            const userAccount = {
-                debits: userLedger[userKey].debits.sort(),
-                credits: userLedger[userKey].credits.sort()
-            };
-            const solutionAccount = normalizedSolution[userKey];
-
-            if (JSON.stringify(userAccount.debits) !== JSON.stringify(solutionAccount.debits)) {
-                 const userTotal = userAccount.debits.reduce((a, b) => a + b, 0);
-                 const solutionTotal = solutionAccount.debits.reduce((a, b) => a + b, 0);
-                 setFeedback({ type: 'error', message: `The debit entries for "${accounts.find(a => a.name.toLowerCase() === userKey)?.name}" are incorrect. You have a total of $${userTotal.toFixed(2)}, but it should be $${solutionTotal.toFixed(2)}.` });
-                 return;
-            }
-            if (JSON.stringify(userAccount.credits) !== JSON.stringify(solutionAccount.credits)) {
-                const userTotal = userAccount.credits.reduce((a, b) => a + b, 0);
-                const solutionTotal = solutionAccount.credits.reduce((a, b) => a + b, 0);
-                setFeedback({ type: 'error', message: `The credit entries for "${accounts.find(a => a.name.toLowerCase() === userKey)?.name}" are incorrect. You have a total of $${userTotal.toFixed(2)}, but it should be $${solutionTotal.toFixed(2)}.` });
-                return;
-            }
-        }
-        
-        setFeedback({ type: 'success', message: 'Correct! All accounts are posted perfectly.' });
+        setErrors(newErrors);
     };
 
     const renderSide = (accountId: number, side: 'debits' | 'credits') => (
@@ -178,29 +216,30 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                 <span>Account</span>
                 <span className="text-right pr-2">Amount</span>
             </div>
-            {accounts.find(acc => acc.id === accountId)?.[side].entries.map((entry, index) => {
-                const isLast = index === accounts.find(acc => acc.id === accountId)![side].entries.length - 1;
+            {accounts.find(acc => acc.id === accountId)?.[side].map((entry, index) => {
+                const isLast = index === accounts.find(acc => acc.id === accountId)![side].length - 1;
                 const isFirst = index === 0;
+                const hasError = errors.entries?.[entry.id];
                 return (
                     <div key={entry.id} className="grid grid-cols-3 gap-1 mb-1 items-center">
                         <Input
                             type="text"
                             placeholder={isFirst ? "Jan 1" : ""}
-                            className="h-8 text-xs"
+                            className={cn("h-8 text-xs", hasError?.general && "border-red-500")}
                             value={entry.date}
                             onChange={(e) => handleEntryChange(accountId, side, index, 'date', e.target.value)}
                         />
                          <Input
                             type="text"
                             placeholder={isFirst ? "e.g. Cash" : ""}
-                            className="h-8 text-xs"
+                            className={cn("h-8 text-xs", hasError?.general && "border-red-500")}
                             value={entry.accountName}
                             onChange={(e) => handleEntryChange(accountId, side, index, 'accountName', e.target.value)}
                         />
                         <Input
                             type="number"
                             placeholder={isFirst ? "0.00" : ""}
-                            className="text-right h-8 text-xs"
+                            className={cn("text-right h-8 text-xs", hasError?.amount && "border-red-500")}
                             value={entry.amount === 0 && !isLast ? '' : entry.amount}
                             onChange={(e) => handleEntryChange(accountId, side, index, 'amount', e.target.value)}
                         />
@@ -215,13 +254,17 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
             <div className="grid grid-cols-1 gap-6">
                 {accounts.map(account => (
                     <div key={account.id} className="border rounded-lg shadow-sm">
-                        <div className="p-2 bg-secondary/50 rounded-t-lg">
+                        <div className={cn("p-2 bg-secondary/50 rounded-t-lg", errors.accounts?.[account.id] && "bg-red-500/10")}>
                             <Input
                                 placeholder="Account Name"
-                                className="font-semibold text-center border-0 bg-transparent h-8 focus-visible:ring-1 focus-visible:ring-ring"
+                                className={cn(
+                                    "font-semibold text-center border-0 bg-transparent h-8 focus-visible:ring-1 focus-visible:ring-ring",
+                                    errors.accounts?.[account.id] && "border-red-500 ring-red-500 placeholder:text-red-400"
+                                    )}
                                 value={account.name}
                                 onChange={(e) => handleAccountNameChange(account.id, e.target.value)}
                             />
+                             {errors.accounts?.[account.id] && <p className="text-xs text-center text-red-500 mt-1">{errors.accounts[account.id]}</p>}
                         </div>
                         <div className="grid grid-cols-2">
                             <div className="border-r">
@@ -234,8 +277,8 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                             </div>
                         </div>
                         <div className="grid grid-cols-2 border-t mt-1">
-                            <div className="p-2 border-r text-right font-bold text-sm">{calculateTotal(account.debits.entries)}</div>
-                            <div className="p-2 text-right font-bold text-sm">{calculateTotal(account.credits.entries)}</div>
+                            <div className="p-2 border-r text-right font-bold text-sm">{calculateTotal(account.debits)}</div>
+                            <div className="p-2 text-right font-bold text-sm">{calculateTotal(account.credits)}</div>
                         </div>
                     </div>
                 ))}
@@ -249,10 +292,15 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
                 </Button>
                 <Button onClick={handleSubmit}>Submit Ledger</Button>
             </div>
-            {feedback && (
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}>
-                    {feedback.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
-                    <p className="font-medium text-sm">{feedback.message}</p>
+            {errors.general && (
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${errors.score?.user === errors.score?.total ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}>
+                    {errors.score?.user === errors.score?.total ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                    <p className="font-medium text-sm">{errors.general}</p>
+                </div>
+            )}
+             {errors.score && (
+                <div className="flex items-center justify-center p-4 bg-secondary/50 rounded-lg">
+                    <p className="font-bold text-lg">Your Score: <span className="text-primary">{errors.score.user} / {errors.score.total}</span></p>
                 </div>
             )}
         </div>

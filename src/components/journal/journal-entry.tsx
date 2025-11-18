@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trash2, PlusCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type JournalLine = {
     id: number;
@@ -37,6 +38,7 @@ export function JournalEntry({
         { id: 2, account: '', debit: '', credit: '' },
     ]);
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+    const [submitted, setSubmitted] = useState(false);
 
     const handleAddLine = () => {
         setLines([...lines, { id: Date.now(), account: '', debit: '', credit: '' }]);
@@ -57,6 +59,7 @@ export function JournalEntry({
         const totalCredits = lines.reduce((sum, line) => sum + (parseFloat(line.credit) || 0), 0);
         
         let isCorrect = false;
+        setSubmitted(true);
 
         if (totalDebits === 0 && totalCredits === 0) {
             setFeedback({ type: 'error', message: "Please enter debit and credit amounts."});
@@ -97,10 +100,9 @@ export function JournalEntry({
                 setFeedback({ type: 'success', message: 'Correct! Transaction recorded successfully.' });
                 isCorrect = true;
             } else {
-                setFeedback({ type: 'error', message: 'The accounts or amounts are incorrect. Please try again.' });
+                setFeedback({ type: 'error', message: 'The accounts or amounts are incorrect. Here is the correct answer.' });
             }
         } else {
-             // Fallback for when no answer is provided
             setFeedback({ type: 'success', message: 'Transaction is balanced! Well done.' });
             isCorrect = true;
         }
@@ -134,7 +136,7 @@ export function JournalEntry({
                                         placeholder="Enter account name"
                                         value={line.account}
                                         onChange={(e) => handleLineChange(line.id, 'account', e.target.value)}
-                                        disabled={feedback?.type === 'success'}
+                                        disabled={submitted}
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -145,7 +147,7 @@ export function JournalEntry({
                                         value={line.debit}
                                         onChange={(e) => handleLineChange(line.id, 'debit', e.target.value)}
                                         onFocus={() => handleLineChange(line.id, 'credit', '')}
-                                        disabled={feedback?.type === 'success'}
+                                        disabled={submitted}
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -156,11 +158,11 @@ export function JournalEntry({
                                         value={line.credit}
                                         onChange={(e) => handleLineChange(line.id, 'credit', e.target.value)}
                                         onFocus={() => handleLineChange(line.id, 'debit', '')}
-                                        disabled={feedback?.type === 'success'}
+                                        disabled={submitted}
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveLine(line.id)} disabled={lines.length <= 2 || feedback?.type === 'success'}>
+                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveLine(line.id)} disabled={lines.length <= 2 || submitted}>
                                         <Trash2 className="h-4 w-4 text-muted-foreground" />
                                     </Button>
                                 </TableCell>
@@ -170,16 +172,45 @@ export function JournalEntry({
                 </Table>
             </div>
             <div className="flex items-center justify-between">
-                <Button variant="outline" onClick={handleAddLine} disabled={feedback?.type === 'success'}>
+                <Button variant="outline" onClick={handleAddLine} disabled={submitted}>
                     <PlusCircle className="mr-2 h-4 w-4" /> Add Line
                 </Button>
-                <Button onClick={handleSubmit} disabled={feedback?.type === 'success'}>Submit Entry</Button>
+                <Button onClick={handleSubmit} disabled={submitted}>Submit Entry</Button>
             </div>
             {feedback && (
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${feedback.type === 'success' ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}>
                     {feedback.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                     <p className="font-medium text-sm">{feedback.message}</p>
                 </div>
+            )}
+             {submitted && answer && (
+                <Card className="mt-4 bg-secondary/30">
+                    <CardHeader>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                           <CheckCircle className="text-primary"/> Correct Answer
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[50%]">Account</TableHead>
+                                    <TableHead className="text-right">Debit</TableHead>
+                                    <TableHead className="text-right">Credit</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {answer.map((line, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="font-medium">{line.account}</TableCell>
+                                        <TableCell className="text-right">{line.debit ? `$${line.debit}` : ''}</TableCell>
+                                        <TableCell className="text-right">{line.credit ? `$${line.credit}` : ''}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             )}
         </div>
     );

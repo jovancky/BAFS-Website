@@ -180,25 +180,26 @@ export function TAccountsLedger({ initialAccounts, solution }: TAccountsLedgerPr
             </div>
             {accounts.find(acc => acc.id === accountId)?.[side].entries.map((entry, index) => {
                 const isLast = index === accounts.find(acc => acc.id === accountId)![side].entries.length - 1;
+                const isFirst = index === 0;
                 return (
                     <div key={entry.id} className="grid grid-cols-3 gap-1 mb-1 items-center">
                         <Input
                             type="text"
-                            placeholder="Jan 1"
+                            placeholder={isFirst ? "Jan 1" : ""}
                             className="h-8 text-xs"
                             value={entry.date}
                             onChange={(e) => handleEntryChange(accountId, side, index, 'date', e.target.value)}
                         />
                          <Input
                             type="text"
-                            placeholder="e.g. Cash"
+                            placeholder={isFirst ? "e.g. Cash" : ""}
                             className="h-8 text-xs"
                             value={entry.accountName}
                             onChange={(e) => handleEntryChange(accountId, side, index, 'accountName', e.target.value)}
                         />
                         <Input
                             type="number"
-                            placeholder="0.00"
+                            placeholder={isFirst ? "0.00" : ""}
                             className="text-right h-8 text-xs"
                             value={entry.amount === 0 && !isLast ? '' : entry.amount}
                             onChange={(e) => handleEntryChange(accountId, side, index, 'amount', e.target.value)}

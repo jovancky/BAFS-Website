@@ -8,18 +8,13 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { BookOpen, CircleDollarSign, Compass, LayoutDashboard, Trophy, User, BrainCircuit } from 'lucide-react';
+import { BookOpen, Compass, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const menuItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/journal', label: 'Journal Entry', icon: BookOpen },
   { href: '/scenarios', label: 'Scenarios', icon: Compass },
-  { href: '/quizzes', label: 'Quizzes', icon: CircleDollarSign },
-  { href: '/tutor', label: 'AI Tutor', icon: BrainCircuit },
-  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-  { href: '/profile', label: 'Profile', icon: User },
 ];
 
 export default function AppSidebar() {
@@ -37,13 +32,16 @@ export default function AppSidebar() {
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} passHref legacyBehavior>
+              <Link href={item.href} passHref>
                 <SidebarMenuButton
+                  asChild
                   isActive={pathname === item.href}
                   tooltip={item.label}
                 >
-                  <item.icon />
-                  <span>{item.label}</span>
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </Link>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

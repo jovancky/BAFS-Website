@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users, AlertTriangle, HandCoins, Receipt, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users, AlertTriangle, HandCoins, Receipt, TrendingUp, TrendingDown, Minus, Banknote, Landmark } from 'lucide-react';
 
 export default function RevisionSummaryPage() {
     return (
@@ -247,6 +247,27 @@ export default function RevisionSummaryPage() {
                             <h3 className="font-semibold text-gray-400">Zero Balance</h3>
                             <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">debit entries</strong> is equal to the total of <strong className="text-foreground/80">credit entries</strong>.</p>
                         </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="border-red-500/50 bg-red-500/20 text-red-900 dark:text-red-100">
+                <CardHeader className="flex-row items-center gap-4">
+                    <AlertTriangle className="h-8 w-8 text-red-500" />
+                    <CardTitle className="text-red-600 dark:text-red-400">VERY IMPORTANT REMARK (BALANCES)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <Banknote className="h-6 w-6 text-red-500" />
+                        <p>
+                           The <strong className="font-bold">Cash</strong> account can NEVER have a credit balance. You cannot spend cash you do not have.
+                        </p>
+                    </div>
+                     <div className="flex items-center gap-4">
+                        <Landmark className="h-6 w-6 text-red-500" />
+                        <p>
+                           However, the <strong className="font-bold">Bank</strong> account CAN have a credit balance. This is known as a <strong className="font-bold">Bank Overdraft</strong> and is considered a liability.
+                        </p>
                     </div>
                 </CardContent>
             </Card>

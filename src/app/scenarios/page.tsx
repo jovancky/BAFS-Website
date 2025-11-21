@@ -14,7 +14,7 @@ const scenarios = [
         businessType: "You have started a new consulting business. The following transactions occurred during the first month. As a service business, any equipment purchased is for internal use, not for resale.",
         transactions: [
             { date: "Jan 1", description: "Started business with $100,000 cash, which was deposited into the bank." },
-            { date: "Jan 7", description: "Purchases office supplies for $60,000 in cash." },
+            { date: "Jan 7", description: "Purchases office supplies for $5,000 in cash." },
             { date: "Jan 9", description: "Purchased an office machine on credit from Advance Machinery Company for $12,000." },
             { date: "Jan 15", description: "Paid rent by cash $5,000." },
             { date: "Jan 20", description: "Provided services to a client and received $20,000 cash." },
@@ -23,10 +23,10 @@ const scenarios = [
         ],
         solution: {
             "Bank": { debits: [{amount: 100000, date: 'Jan 1', account: 'Capital'}], credits: [{amount: 12000, date: 'Jan 30', account: 'Other Payables: Advance Machinery Company'}, {amount: 88000, date: 'Jan 31', account: 'Balance c/d'}] },
-            "Cash": { debits: [{amount: 20000, date: 'Jan 20', account: 'Commission Revenue'}, {amount: 47000, date: 'Jan 31', account: 'Balance c/d'}], credits: [{amount: 60000, date: 'Jan 7', account: 'Purchases'}, {amount: 5000, date: 'Jan 15', account: 'Rent'}, {amount: 2000, date: 'Jan 25', account: 'Drawings'}] },
-            "Purchases": { debits: [{amount: 60000, date: 'Jan 7', account: 'Cash'}], credits: [{amount: 60000, date: 'Jan 31', account: 'Balance c/d'}] },
-            "Machinery": { debits: [{amount: 12000, date: 'Jan 9', account: 'Other Payables: Advance Machinery Company'}], credits: [{amount: 12000, date: 'Jan 31', account: 'Balance c/d'}] },
-            "Other Payables: Advance Machinery Company": { debits: [{amount: 12000, date: 'Jan 30', account: 'Bank'}], credits: [{amount: 12000, date: 'Jan 9', account: 'Machinery'}] },
+            "Cash": { debits: [{amount: 20000, date: 'Jan 20', account: 'Commission Revenue'}], credits: [{amount: 5000, date: 'Jan 7', account: 'Office Supplies'}, {amount: 5000, date: 'Jan 15', account: 'Rent'}, {amount: 2000, date: 'Jan 25', account: 'Drawings'}, {amount: 8000, date: 'Jan 31', account: 'Balance c/d'}] },
+            "Office Supplies": { debits: [{amount: 5000, date: 'Jan 7', account: 'Cash'}], credits: [{amount: 5000, date: 'Jan 31', account: 'Balance c/d'}] },
+            "Office Equipment": { debits: [{amount: 12000, date: 'Jan 9', account: 'Other Payables: Advance Machinery Company'}], credits: [{amount: 12000, date: 'Jan 31', account: 'Balance c/d'}] },
+            "Other Payables: Advance Machinery Company": { debits: [{amount: 12000, date: 'Jan 30', account: 'Bank'}], credits: [{amount: 12000, date: 'Jan 9', account: 'Office Equipment'}] },
             "Capital": { debits: [{amount: 100000, date: 'Jan 31', account: 'Balance c/d'}], credits: [{amount: 100000, date: 'Jan 1', account: 'Bank'}] },
             "Rent": { debits: [{amount: 5000, date: 'Jan 15', account: 'Cash'}], credits: [{amount: 5000, date: 'Jan 31', account: 'Balance c/d'}] },
             "Commission Revenue": { debits: [{amount: 20000, date: 'Jan 31', account: 'Balance c/d'}], credits: [{amount: 20000, date: 'Jan 20', account: 'Cash'}] },

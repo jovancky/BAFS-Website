@@ -85,8 +85,8 @@ export default function RevisionSummaryPage() {
                 </CardHeader>
                 <CardContent className="space-y-6 text-center">
                     <div className="flex flex-col items-center">
-                        <div className="flex items-center gap-2 font-bold text-xl mb-2">
-                           <Users className="h-6 w-6 text-primary"/>
+                        <div className="flex items-center gap-2 font-bold text-xl mb-2 text-yellow-400">
+                           <Users className="h-6 w-6"/>
                            <span>Creditors</span>
                         </div>
                         <div className="w-px h-8 bg-border"></div>
@@ -100,11 +100,11 @@ export default function RevisionSummaryPage() {
                         <div className="flex flex-col items-center gap-4">
                             <div className="relative">
                                <div className="absolute -top-4 left-1/2 w-px h-4 bg-border -translate-x-1/2 md:hidden"></div>
-                                <h3 className="font-semibold text-lg text-primary">Trade Creditors</h3>
+                                <h3 className="font-semibold text-lg text-blue-400">Trade Creditors</h3>
                             </div>
                              <div className="flex flex-col gap-2 p-4 rounded-lg border bg-secondary/50 text-left w-full">
                                 <div className="flex items-center gap-3">
-                                    <ShoppingCart className="h-6 w-6 text-primary" />
+                                    <ShoppingCart className="h-6 w-6 text-blue-400" />
                                     <h4 className="font-semibold">Trade Payables</h4>
                                 </div>
                                 <p className="text-sm text-muted-foreground">Arises from the purchase of goods on credit (e.g., buying inventory from a supplier).</p>
@@ -115,11 +115,11 @@ export default function RevisionSummaryPage() {
                         <div className="flex flex-col items-center gap-4">
                              <div className="relative">
                                <div className="absolute -top-4 left-1/2 w-px h-4 bg-border -translate-x-1/2 md:hidden"></div>
-                                <h3 className="font-semibold text-lg text-primary">Non-Trade Creditors</h3>
+                                <h3 className="font-semibold text-lg text-purple-400">Non-Trade Creditors</h3>
                             </div>
                            <div className="flex flex-col gap-2 p-4 rounded-lg border bg-secondary/50 text-left w-full">
                                 <div className="flex items-center gap-3">
-                                    <Package className="h-6 w-6 text-primary" />
+                                    <Package className="h-6 w-6 text-purple-400" />
                                     <h4 className="font-semibold">Other Payables</h4>
                                 </div>
                                 <p className="text-sm text-muted-foreground">Arises from transactions other than purchasing goods (e.g., buying equipment on credit, unpaid expenses).</p>

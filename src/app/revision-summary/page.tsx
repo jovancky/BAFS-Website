@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users, AlertTriangle } from 'lucide-react';
+import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users, AlertTriangle, HandCoins, Receipt } from 'lucide-react';
 
 export default function RevisionSummaryPage() {
     return (
@@ -79,6 +79,73 @@ export default function RevisionSummaryPage() {
 
             <Card>
                 <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Understanding Debtors</CardTitle>
+                    <CardDescription>Debtors are entities who owe the business money. They are divided into two main types.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6 text-center">
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center gap-2 font-bold text-xl mb-2 text-green-400">
+                           <Users className="h-6 w-6"/>
+                           <span>Debtors</span>
+                        </div>
+                        <div className="w-px h-8 bg-border"></div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
+                         {/* Connecting line */}
+                        <div className="hidden md:block absolute top-1/2 left-0 w-full h-px bg-border -translate-y-12"></div>
+                        <div className="hidden md:block absolute top-1/2 left-1/2 w-px h-8 bg-border -translate-x-1/2 -translate-y-12"></div>
+                       
+                        {/* Trade Debtors */}
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="relative">
+                               <div className="absolute -top-4 left-1/2 w-px h-4 bg-border -translate-x-1/2 md:hidden"></div>
+                                <h3 className="font-semibold text-lg text-blue-400">Trade Debtors</h3>
+                            </div>
+                             <div className="flex flex-col gap-2 p-4 rounded-lg border bg-secondary/50 text-left w-full">
+                                <div className="flex items-center gap-3">
+                                    <Receipt className="h-6 w-6 text-blue-400" />
+                                    <h4 className="font-semibold">Trade Receivables</h4>
+                                </div>
+                                <p className="text-sm text-muted-foreground">Arises from the sale of goods on credit (e.g., selling inventory to a customer).</p>
+                            </div>
+                        </div>
+
+                         {/* Non-Trade Debtors */}
+                        <div className="flex flex-col items-center gap-4">
+                             <div className="relative">
+                               <div className="absolute -top-4 left-1/2 w-px h-4 bg-border -translate-x-1/2 md:hidden"></div>
+                                <h3 className="font-semibold text-lg text-purple-400">Non-Trade Debtors</h3>
+                            </div>
+                           <div className="flex flex-col gap-2 p-4 rounded-lg border bg-secondary/50 text-left w-full">
+                                <div className="flex items-center gap-3">
+                                    <HandCoins className="h-6 w-6 text-purple-400" />
+                                    <h4 className="font-semibold">Other Receivables</h4>
+                                </div>
+                                <p className="text-sm text-muted-foreground">Arises from transactions other than selling goods (e.g., a loan given to an employee).</p>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+             <Card className="border-destructive/50 bg-destructive/10 text-destructive-foreground">
+                <CardHeader className="flex-row items-center gap-4">
+                    <AlertTriangle className="h-8 w-8 text-destructive" />
+                    <CardTitle className="text-destructive">VERY IMPORTANT REMARK (DEBTORS)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p>
+                        The term <strong className="font-bold">"Accounts Receivable"</strong> is often used incorrectly and is not accepted in this learning context. It is too general. Always be specific:
+                    </p>
+                    <ul className="list-disc pl-6 mt-2">
+                        <li>Use <strong className="font-bold">Trade Receivables</strong> for credit sales of goods.</li>
+                        <li>Use <strong className="font-bold">Other Receivables</strong> for all other amounts owed to the business.</li>
+                    </ul>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
                     <CardTitle className="font-headline text-2xl">Understanding Creditors</CardTitle>
                     <CardDescription>Creditors are entities to whom the business owes money. They are divided into two main types.</CardDescription>
                 </CardHeader>
@@ -131,7 +198,7 @@ export default function RevisionSummaryPage() {
             <Card className="border-destructive/50 bg-destructive/10 text-destructive-foreground">
                 <CardHeader className="flex-row items-center gap-4">
                     <AlertTriangle className="h-8 w-8 text-destructive" />
-                    <CardTitle className="text-destructive">VERY IMPORTANT REMARK</CardTitle>
+                    <CardTitle className="text-destructive">VERY IMPORTANT REMARK (CREDITORS)</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p>
@@ -146,3 +213,5 @@ export default function RevisionSummaryPage() {
         </div>
     );
 }
+
+    

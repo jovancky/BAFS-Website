@@ -26,10 +26,10 @@ export default function AppSidebar() {
   return (
     <>
       <SidebarHeader className="border-b">
-        <div className="flex items-center gap-2 p-2">
+        <Link href="/" className="flex items-center gap-2 p-2">
             <Trophy className="h-8 w-8 text-primary" />
             <span className="font-headline text-xl font-semibold">LedgerLeague</span>
-        </div>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

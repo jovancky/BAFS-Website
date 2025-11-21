@@ -1,7 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users, AlertTriangle } from 'lucide-react';
 
 export default function RevisionSummaryPage() {
     return (
@@ -126,7 +125,22 @@ export default function RevisionSummaryPage() {
                             </div>
                         </div>
                     </div>
+                </CardContent>
+            </Card>
 
+            <Card className="border-destructive/50 bg-destructive/10 text-destructive-foreground">
+                <CardHeader className="flex-row items-center gap-4">
+                    <AlertTriangle className="h-8 w-8 text-destructive" />
+                    <CardTitle className="text-destructive">VERY IMPORTANT REMARK</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p>
+                        The term <strong className="font-bold">"Accounts Payable"</strong> is often used incorrectly and is not accepted in this learning context. It is too general as it can refer to both trade and non-trade payables. Always be specific:
+                    </p>
+                    <ul className="list-disc pl-6 mt-2">
+                        <li>Use <strong className="font-bold">Trade Payables</strong> for credit purchases of goods for resale.</li>
+                        <li>Use <strong className="font-bold">Other Payables</strong> for all other credit purchases (e.g., assets, services).</li>
+                    </ul>
                 </CardContent>
             </Card>
         </div>

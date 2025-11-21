@@ -79,36 +79,6 @@ export default function RevisionSummaryPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="font-headline text-2xl">Understanding Account Balances</CardTitle>
-                    <CardDescription>The balance of an account is determined by comparing the total debits and total credits.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-start gap-4 p-4 rounded-lg bg-blue-500/10">
-                        <TrendingUp className="h-6 w-6 text-blue-500 mt-1 shrink-0" />
-                        <div>
-                            <h3 className="font-semibold text-blue-400">Debit Balance</h3>
-                            <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">debit entries</strong> is greater than the total of <strong className="text-foreground/80">credit entries</strong>.</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start gap-4 p-4 rounded-lg bg-purple-500/10">
-                        <TrendingDown className="h-6 w-6 text-purple-500 mt-1 shrink-0" />
-                        <div>
-                            <h3 className="font-semibold text-purple-400">Credit Balance</h3>
-                            <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">credit entries</strong> is greater than the total of <strong className="text-foreground/80">debit entries</strong>.</p>
-                        </div>
-                    </div>
-                     <div className="flex items-start gap-4 p-4 rounded-lg bg-gray-500/10">
-                        <Minus className="h-6 w-6 text-gray-500 mt-1 shrink-0" />
-                        <div>
-                            <h3 className="font-semibold text-gray-400">Zero Balance</h3>
-                            <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">debit entries</strong> is equal to the total of <strong className="text-foreground/80">credit entries</strong>.</p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
                     <CardTitle className="font-headline text-2xl">Understanding Debtors</CardTitle>
                     <CardDescription>Debtors are entities who owe the business money. They are divided into two main types.</CardDescription>
                 </CardHeader>
@@ -240,6 +210,37 @@ export default function RevisionSummaryPage() {
                     </ul>
                 </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Understanding Account Balances</CardTitle>
+                    <CardDescription>The balance of an account is determined by comparing the total debits and total credits.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-start gap-4 p-4 rounded-lg bg-blue-500/10">
+                        <TrendingUp className="h-6 w-6 text-blue-500 mt-1 shrink-0" />
+                        <div>
+                            <h3 className="font-semibold text-blue-400">Debit Balance</h3>
+                            <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">debit entries</strong> is greater than the total of <strong className="text-foreground/80">credit entries</strong>.</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-4 p-4 rounded-lg bg-purple-500/10">
+                        <TrendingDown className="h-6 w-6 text-purple-500 mt-1 shrink-0" />
+                        <div>
+                            <h3 className="font-semibold text-purple-400">Credit Balance</h3>
+                            <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">credit entries</strong> is greater than the total of <strong className="text-foreground/80">debit entries</strong>.</p>
+                        </div>
+                    </div>
+                     <div className="flex items-start gap-4 p-4 rounded-lg bg-gray-500/10">
+                        <Minus className="h-6 w-6 text-gray-500 mt-1 shrink-0" />
+                        <div>
+                            <h3 className="font-semibold text-gray-400">Zero Balance</h3>
+                            <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">debit entries</strong> is equal to the total of <strong className="text-foreground/80">credit entries</strong>.</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
         </div>
     );
 }

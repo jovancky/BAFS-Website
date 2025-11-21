@@ -3,7 +3,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -36,9 +36,6 @@ export default function AppHeader() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/profile"><User className="mr-2 h-4 w-4" /><span>Profile</span></Link>
-          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="#"><Settings className="mr-2 h-4 w-4" /><span>Settings</span></Link>
           </DropdownMenuItem>

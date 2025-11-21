@@ -4,7 +4,7 @@ import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package, Users, AlertTrian
 
 export default function RevisionSummaryPage() {
     return (
-        <div className="space-y-8">
+        <div className="space-y-12">
             <div className="flex items-center gap-4">
                 <Lightbulb className="h-12 w-12 text-primary"/>
                 <div>

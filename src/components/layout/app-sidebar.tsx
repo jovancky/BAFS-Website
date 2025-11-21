@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -8,13 +9,14 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { BookOpen, Compass, Trophy } from 'lucide-react';
+import { BookOpen, Compass, Trophy, Scale } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const menuItems = [
   { href: '/journal', label: 'Journal Entry', icon: BookOpen },
   { href: '/scenarios', label: 'Scenarios', icon: Compass },
+  { href: '/balance-quiz', label: 'Balance Quiz', icon: Scale },
 ];
 
 export default function AppSidebar() {
@@ -34,6 +36,7 @@ export default function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
+                href={item.href}
                 isActive={pathname === item.href}
                 tooltip={item.label}
               >

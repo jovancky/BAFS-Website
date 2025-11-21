@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Compass } from 'lucide-react';
+import { ArrowRight, BookOpen, Compass, Scale } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-3">
@@ -43,6 +43,22 @@ export default function Home() {
                  <Button asChild className="w-full">
                     <Link href="/scenarios">
                         Explore Scenarios <ArrowRight className="ml-2" />
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
+         <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                    <Scale className="h-6 w-6 text-primary" />
+                    <span>Balance Quiz</span>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground mb-4">Test your understanding of account balances with this quick multiple-choice quiz.</p>
+                 <Button asChild className="w-full">
+                    <Link href="/balance-quiz">
+                        Start Quiz <ArrowRight className="ml-2" />
                     </Link>
                 </Button>
             </CardContent>

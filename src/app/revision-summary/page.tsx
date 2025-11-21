@@ -1,5 +1,6 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, ArrowUp, ArrowDown } from 'lucide-react';
+import { Lightbulb, ArrowUp, ArrowDown, ShoppingCart, Package } from 'lucide-react';
 
 export default function RevisionSummaryPage() {
     return (
@@ -75,6 +76,29 @@ export default function RevisionSummaryPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Understanding Creditors</CardTitle>
+                    <CardDescription>Creditors are divided into two main types: trade and non-trade.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-2 p-4 rounded-lg border bg-secondary/50">
+                         <div className="flex items-center gap-3">
+                            <ShoppingCart className="h-6 w-6 text-primary" />
+                            <h3 className="font-semibold text-lg">Trade Payables (Trade Creditors)</h3>
+                        </div>
+                        <p className="text-muted-foreground">These are liabilities arising from the purchase of goods on credit. For example, buying inventory from a supplier to sell to customers.</p>
+                    </div>
+                     <div className="flex flex-col gap-2 p-4 rounded-lg border bg-secondary/50">
+                        <div className="flex items-center gap-3">
+                            <Package className="h-6 w-6 text-primary" />
+                            <h3 className="font-semibold text-lg">Other Payables (Non-Trade Creditors)</h3>
+                        </div>
+                        <p className="text-muted-foreground">These are liabilities from transactions other than the purchase of goods. This includes buying equipment on credit, or expenses like rent or utilities that have been incurred but not yet paid.</p>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

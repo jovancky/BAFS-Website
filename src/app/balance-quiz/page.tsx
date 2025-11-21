@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -40,36 +40,69 @@ const TAccountDisplay = ({ debits, credits }: { debits: number[], credits: numbe
     );
 };
 
+const generateQuestion = () => {
+    const numDebits = Math.floor(Math.random() * 4) + 1; // 1 to 4 debit entries
+    const numCredits = Math.floor(Math.random() * 4) + 1; // 1 to 4 credit entries
+    
+    const debits = Array.from({ length: numDebits }, () => Math.floor(Math.random() * 500) + 50);
+    const credits = Array.from({ length: numCredits }, () => Math.floor(Math.random() * 500) + 50);
+
+    const totalDebits = debits.reduce((a, b) => a + b, 0);
+    const totalCredits = credits.reduce((a, b) => a + b, 0);
+    
+    let correctAnswer: 'debit' | 'credit' | 'zero';
+    if (totalDebits > totalCredits) {
+        correctAnswer = 'debit';
+    } else if (totalCredits > totalDebits) {
+        correctAnswer = 'credit';
+    } else {
+        // To make zero balance less frequent, we can force a change if they are equal
+        debits[0] += 100;
+        correctAnswer = 'debit';
+    }
+
+    return { debits, credits, correctAnswer };
+};
+
 
 export default function BalanceQuizPage() {
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [submitted, setSubmitted] = useState(false);
+    const [quizData, setQuizData] = useState<{debits: number[], credits: number[], correctAnswer: string} | null>(null);
     
-    const correctAnswer = "debit";
-    const accountData = {
-        debits: [1000, 500],
-        credits: [200, 300]
-    };
+    const loadNewQuestion = useCallback(() => {
+        setQuizData(generateQuestion());
+        setSelectedAnswer(null);
+        setFeedback(null);
+        setSubmitted(false);
+    }, []);
+
+    useEffect(() => {
+        loadNewQuestion();
+    }, [loadNewQuestion]);
+    
 
     const handleSubmit = () => {
-        if (!selectedAnswer) {
+        if (!selectedAnswer || !quizData) {
             setFeedback({ type: 'error', message: 'Please select an answer.' });
             return;
         }
 
         setSubmitted(true);
-        if (selectedAnswer === correctAnswer) {
+        const totalDebits = quizData.debits.reduce((a,b) => a+b, 0);
+        const totalCredits = quizData.credits.reduce((a,b) => a+b, 0);
+
+        if (selectedAnswer === quizData.correctAnswer) {
             setFeedback({ type: 'success', message: 'Correct! The total debits are greater than the total credits, resulting in a debit balance.' });
         } else {
-            setFeedback({ type: 'error', message: `Not quite. The correct answer is Debit Balance. The total debits ($1500) exceed the total credits ($500).` });
+            const correctType = quizData.correctAnswer.charAt(0).toUpperCase() + quizData.correctAnswer.slice(1);
+            setFeedback({ type: 'error', message: `Not quite. The correct answer is ${correctType} Balance. The total debits ($${totalDebits.toFixed(2)}) and total credits ($${totalCredits.toFixed(2)}) determine the final balance.` });
         }
     };
-    
-    const handleReset = () => {
-        setSelectedAnswer(null);
-        setFeedback(null);
-        setSubmitted(false);
+
+    if (!quizData) {
+        return <div className="container mx-auto py-10 text-center">Loading quiz...</div>;
     }
 
     return (
@@ -80,7 +113,7 @@ export default function BalanceQuizPage() {
                     <CardDescription>Determine the final balance of the T-account shown below.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <TAccountDisplay debits={accountData.debits} credits={accountData.credits} />
+                    <TAccountDisplay debits={quizData.debits} credits={quizData.credits} />
                     
                     <div className="space-y-4 max-w-md mx-auto">
                         <p className="font-semibold text-center">What is the normal balance of this account?</p>
@@ -107,7 +140,7 @@ export default function BalanceQuizPage() {
 
                      <div className="flex justify-center">
                         {submitted ? (
-                            <Button onClick={handleReset}>Try Another</Button>
+                            <Button onClick={loadNewQuestion}>Try Another</Button>
                         ) : (
                             <Button onClick={handleSubmit}>Submit Answer</Button>
                         )}

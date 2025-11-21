@@ -128,10 +128,10 @@ export default function RevisionSummaryPage() {
                 </CardContent>
             </Card>
 
-             <Card className="border-destructive/50 bg-destructive/10 text-destructive-foreground">
+             <Card className="border-red-500/50 bg-red-500/20 text-red-900 dark:text-red-100">
                 <CardHeader className="flex-row items-center gap-4">
-                    <AlertTriangle className="h-8 w-8 text-destructive" />
-                    <CardTitle className="text-destructive">VERY IMPORTANT REMARK (DEBTORS)</CardTitle>
+                    <AlertTriangle className="h-8 w-8 text-red-500" />
+                    <CardTitle className="text-red-600 dark:text-red-400">VERY IMPORTANT REMARK (DEBTORS)</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p>
@@ -195,10 +195,10 @@ export default function RevisionSummaryPage() {
                 </CardContent>
             </Card>
 
-            <Card className="border-destructive/50 bg-destructive/10 text-destructive-foreground">
+            <Card className="border-red-500/50 bg-red-500/20 text-red-900 dark:text-red-100">
                 <CardHeader className="flex-row items-center gap-4">
-                    <AlertTriangle className="h-8 w-8 text-destructive" />
-                    <CardTitle className="text-destructive">VERY IMPORTANT REMARK (CREDITORS)</CardTitle>
+                    <AlertTriangle className="h-8 w-8 text-red-500" />
+                    <CardTitle className="text-red-600 dark:text-red-400">VERY IMPORTANT REMARK (CREDITORS)</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p>

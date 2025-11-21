@@ -9,7 +9,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { BookOpen, Compass, Trophy, Scale } from 'lucide-react';
+import { BookOpen, Compass, Trophy, Scale, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -17,6 +17,7 @@ const menuItems = [
   { href: '/journal', label: 'Journal Entry', icon: BookOpen },
   { href: '/scenarios', label: 'Scenarios', icon: Compass },
   { href: '/balance-quiz', label: 'Balance Quiz', icon: Scale },
+  { href: '/revision-summary', label: 'Revision Summary', icon: Lightbulb },
 ];
 
 export default function AppSidebar() {

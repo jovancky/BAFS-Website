@@ -222,6 +222,11 @@ export default function RevisionSummaryPage() {
                         <div>
                             <h3 className="font-semibold text-blue-400">Debit Balance</h3>
                             <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">debit entries</strong> is greater than the total of <strong className="text-foreground/80">credit entries</strong>.</p>
+                            <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground space-y-1">
+                                <li><span className="font-semibold text-blue-400/80">Assets</span> (e.g., Cash, Equipment)</li>
+                                <li><span className="font-semibold text-red-400/80">Expenses</span> (e.g., Rent, Salaries)</li>
+                                <li><span className="font-semibold text-orange-400/80">Drawings</span></li>
+                            </ul>
                         </div>
                     </div>
                     <div className="flex items-start gap-4 p-4 rounded-lg bg-purple-500/10">
@@ -229,6 +234,11 @@ export default function RevisionSummaryPage() {
                         <div>
                             <h3 className="font-semibold text-purple-400">Credit Balance</h3>
                             <p className="text-sm text-muted-foreground">Arises when the total of <strong className="text-foreground/80">credit entries</strong> is greater than the total of <strong className="text-foreground/80">debit entries</strong>.</p>
+                             <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground space-y-1">
+                                <li><span className="font-semibold text-yellow-400/80">Liabilities</span> (e.g., Trade Payables)</li>
+                                <li><span className="font-semibold text-green-400/80">Revenues</span> (e.g., Commission Revenue)</li>
+                                <li><span className="font-semibold text-purple-400/80">Capital</span></li>
+                            </ul>
                         </div>
                     </div>
                      <div className="flex items-start gap-4 p-4 rounded-lg bg-gray-500/10">

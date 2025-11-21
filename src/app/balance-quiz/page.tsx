@@ -9,14 +9,34 @@ import { Label } from '@/components/ui/label';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const TAccountDisplay = ({ debits, credits }: { debits: number[], credits: number[] }) => {
+const accountTypes = [
+    { name: 'Cash', normalBalance: 'debit' },
+    { name: 'Accounts Receivable', normalBalance: 'debit' },
+    { name: 'Equipment', normalBalance: 'debit' },
+    { name: 'Prepaid Rent', normalBalance: 'debit' },
+    { name: 'Office Supplies', normalBalance: 'debit' },
+    { name: 'Accounts Payable', normalBalance: 'credit' },
+    { name: 'Salaries Payable', normalBalance: 'credit' },
+    { name: 'Unearned Revenue', normalBalance: 'credit' },
+    { name: 'Notes Payable', normalBalance: 'credit' },
+    { name: 'Common Stock', normalBalance: 'credit' },
+    { name: 'Retained Earnings', normalBalance: 'credit' },
+    { name: 'Service Revenue', normalBalance: 'credit' },
+    { name: 'Sales Revenue', normalBalance: 'credit' },
+    { name: 'Rent Expense', normalBalance: 'debit' },
+    { name: 'Salaries Expense', normalBalance: 'debit' },
+    { name: 'Utilities Expense', normalBalance: 'debit' },
+];
+
+
+const TAccountDisplay = ({ accountName, debits, credits }: { accountName: string, debits: number[], credits: number[] }) => {
     const totalDebits = debits.reduce((a, b) => a + b, 0);
     const totalCredits = credits.reduce((a, b) => a + b, 0);
 
     return (
         <div className="border rounded-lg shadow-sm max-w-md mx-auto">
             <div className="p-2 bg-secondary/50 rounded-t-lg">
-                <p className="font-semibold text-center">Cash</p>
+                <p className="font-semibold text-center">{accountName}</p>
             </div>
             <div className="grid grid-cols-2">
                 <div className="border-r p-2">
@@ -41,27 +61,48 @@ const TAccountDisplay = ({ debits, credits }: { debits: number[], credits: numbe
 };
 
 const generateQuestion = () => {
-    const numDebits = Math.floor(Math.random() * 4) + 1; // 1 to 4 debit entries
-    const numCredits = Math.floor(Math.random() * 4) + 1; // 1 to 4 credit entries
-    
-    const debits = Array.from({ length: numDebits }, () => Math.floor(Math.random() * 500) + 50);
-    const credits = Array.from({ length: numCredits }, () => Math.floor(Math.random() * 500) + 50);
+    const account = accountTypes[Math.floor(Math.random() * accountTypes.length)];
 
-    const totalDebits = debits.reduce((a, b) => a + b, 0);
-    const totalCredits = credits.reduce((a, b) => a + b, 0);
+    const numDebits = Math.floor(Math.random() * 3) + 1;
+    const numCredits = Math.floor(Math.random() * 3) + 1;
     
-    let correctAnswer: 'debit' | 'credit' | 'zero';
-    if (totalDebits > totalCredits) {
-        correctAnswer = 'debit';
-    } else if (totalCredits > totalDebits) {
-        correctAnswer = 'credit';
-    } else {
-        // To make zero balance less frequent, we can force a change if they are equal
-        debits[0] += 100;
-        correctAnswer = 'debit';
+    let debits = Array.from({ length: numDebits }, () => Math.floor(Math.random() * 500) + 50);
+    let credits = Array.from({ length: numCredits }, () => Math.floor(Math.random() * 500) + 50);
+
+    let totalDebits = debits.reduce((a, b) => a + b, 0);
+    let totalCredits = credits.reduce((a, b) => a + b, 0);
+
+    // Ensure the final balance matches the account's normal balance
+    if (account.normalBalance === 'debit') {
+        if (totalDebits <= totalCredits) {
+            debits[0] += (totalCredits - totalDebits) + (Math.floor(Math.random() * 200) + 50);
+        }
+    } else { // normalBalance is 'credit'
+        if (totalCredits <= totalDebits) {
+            credits[0] += (totalDebits - totalCredits) + (Math.floor(Math.random() * 200) + 50);
+        }
     }
 
-    return { debits, credits, correctAnswer };
+    const finalTotalDebits = debits.reduce((a,b) => a+b, 0);
+    const finalTotalCredits = credits.reduce((a,b) => a+b, 0);
+
+    let correctAnswer: 'debit' | 'credit' | 'zero';
+    if (finalTotalDebits > finalTotalCredits) {
+        correctAnswer = 'debit';
+    } else if (finalTotalCredits > finalTotalDebits) {
+        correctAnswer = 'credit';
+    } else {
+        // This case is now very unlikely, but as a fallback, ensure it matches normal balance.
+        if (account.normalBalance === 'debit') {
+             debits[0] += 100;
+             correctAnswer = 'debit';
+        } else {
+             credits[0] += 100;
+             correctAnswer = 'credit';
+        }
+    }
+
+    return { accountName: account.name, debits, credits, correctAnswer };
 };
 
 
@@ -69,7 +110,7 @@ export default function BalanceQuizPage() {
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [submitted, setSubmitted] = useState(false);
-    const [quizData, setQuizData] = useState<{debits: number[], credits: number[], correctAnswer: string} | null>(null);
+    const [quizData, setQuizData] = useState<{accountName: string; debits: number[], credits: number[], correctAnswer: string} | null>(null);
     
     const loadNewQuestion = useCallback(() => {
         setQuizData(generateQuestion());
@@ -94,7 +135,7 @@ export default function BalanceQuizPage() {
         const totalCredits = quizData.credits.reduce((a,b) => a+b, 0);
 
         if (selectedAnswer === quizData.correctAnswer) {
-            setFeedback({ type: 'success', message: 'Correct! The total debits are greater than the total credits, resulting in a debit balance.' });
+            setFeedback({ type: 'success', message: 'Correct! Well done.' });
         } else {
             const correctType = quizData.correctAnswer.charAt(0).toUpperCase() + quizData.correctAnswer.slice(1);
             setFeedback({ type: 'error', message: `Not quite. The correct answer is ${correctType} Balance. The total debits ($${totalDebits.toFixed(2)}) and total credits ($${totalCredits.toFixed(2)}) determine the final balance.` });
@@ -113,7 +154,7 @@ export default function BalanceQuizPage() {
                     <CardDescription>Determine the final balance of the T-account shown below.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <TAccountDisplay debits={quizData.debits} credits={quizData.credits} />
+                    <TAccountDisplay accountName={quizData.accountName} debits={quizData.debits} credits={quizData.credits} />
                     
                     <div className="space-y-4 max-w-md mx-auto">
                         <p className="font-semibold text-center">What is the normal balance of this account?</p>

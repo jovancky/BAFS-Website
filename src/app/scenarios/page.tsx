@@ -22,15 +22,15 @@ const scenarios = [
             { date: "Jan 30", description: "Paid Advance Machinery Company in full by cheque." },
         ],
         solution: {
-            "Bank": { debits: [{amount: 100000, date: 'Jan 1', account: 'Capital'}], credits: [{amount: 12000, date: 'Jan 30', account: 'Other Payables: Advance Machinery Company'}] },
+            "Bank": { debits: [{amount: 100000, date: 'Jan 1', account: 'Capital'}], credits: [{amount: 12000, date: 'Jan 30', account: 'Other Payables: Advance Machinery Company'}, {amount: 88000, date: 'Jan 31', account: 'Balance c/d'}] },
             "Cash": { debits: [{amount: 20000, date: 'Jan 20', account: 'Commission Revenue'}], credits: [{amount: 60000, date: 'Jan 7', account: 'Purchases'}, {amount: 5000, date: 'Jan 15', account: 'Rent'}, {amount: 2000, date: 'Jan 25', account: 'Drawings'}] },
-            "Purchases": { debits: [{amount: 60000, date: 'Jan 7', account: 'Cash'}], credits: [] },
-            "Machinery": { debits: [{amount: 12000, date: 'Jan 9', account: 'Other Payables: Advance Machinery Company'}], credits: [] },
+            "Purchases": { debits: [{amount: 60000, date: 'Jan 7', account: 'Cash'}], credits: [{amount: 60000, date: 'Jan 31', account: 'Balance c/d'}] },
+            "Machinery": { debits: [{amount: 12000, date: 'Jan 9', account: 'Other Payables: Advance Machinery Company'}], credits: [{amount: 12000, date: 'Jan 31', account: 'Balance c/d'}] },
             "Other Payables: Advance Machinery Company": { debits: [{amount: 12000, date: 'Jan 30', account: 'Bank'}], credits: [{amount: 12000, date: 'Jan 9', account: 'Machinery'}] },
-            "Capital": { debits: [], credits: [{amount: 100000, date: 'Jan 1', account: 'Bank'}] },
-            "Rent": { debits: [{amount: 5000, date: 'Jan 15', account: 'Cash'}], credits: [] },
-            "Commission Revenue": { debits: [], credits: [{amount: 20000, date: 'Jan 20', account: 'Cash'}] },
-            "Drawings": { debits: [{amount: 2000, date: 'Jan 25', account: 'Cash'}], credits: [] },
+            "Capital": { debits: [{amount: 100000, date: 'Jan 31', account: 'Balance c/d'}], credits: [{amount: 100000, date: 'Jan 1', account: 'Bank'}] },
+            "Rent": { debits: [{amount: 5000, date: 'Jan 15', account: 'Cash'}], credits: [{amount: 5000, date: 'Jan 31', account: 'Balance c/d'}] },
+            "Commission Revenue": { debits: [{amount: 20000, date: 'Jan 31', account: 'Balance c/d'}], credits: [{amount: 20000, date: 'Jan 20', account: 'Cash'}] },
+            "Drawings": { debits: [{amount: 2000, date: 'Jan 25', account: 'Cash'}], credits: [{amount: 2000, date: 'Jan 31', account: 'Balance c/d'}] },
         }
     },
     {
@@ -47,15 +47,15 @@ const scenarios = [
             { date: "Feb 28", description: "Paid Tech Supplies Inc. the amount due by cheque." },
         ],
         solution: {
-            "Purchases": { debits: [{ amount: 30000, date: 'Feb 1', account: 'Trade Payables: Tech Supplies Inc.' }], credits: [] },
-            "Cash": { debits: [{ amount: 15000, date: 'Feb 5', account: 'Sales' }], credits: [] },
+            "Purchases": { debits: [{ amount: 30000, date: 'Feb 1', account: 'Trade Payables: Tech Supplies Inc.' }], credits: [{amount: 30000, date: 'Feb 28', account: 'Balance c/d'}] },
+            "Cash": { debits: [{ amount: 15000, date: 'Feb 5', account: 'Sales' }], credits: [{amount: 15000, date: 'Feb 28', account: 'Balance c/d'}] },
             "Bank": { debits: [{ amount: 9000, date: 'Feb 25', account: 'Trade Receivables: The Gadget Hub' }], credits: [{ amount: 2500, date: 'Feb 16', account: 'Rent' }, { amount: 28000, date: 'Feb 28', account: 'Trade Payables: Tech Supplies Inc.' }] },
-            "Sales": { debits: [], credits: [{ amount: 15000, date: 'Feb 5', account: 'Cash' }, { amount: 10000, date: 'Feb 8', account: 'Trade Receivables: The Gadget Hub' }] },
+            "Sales": { debits: [{amount: 25000, date: 'Feb 28', account: 'Balance c/d'}], credits: [{ amount: 15000, date: 'Feb 5', account: 'Cash' }, { amount: 10000, date: 'Feb 8', account: 'Trade Receivables: The Gadget Hub' }] },
             "Trade Receivables: The Gadget Hub": { debits: [{ amount: 10000, date: 'Feb 8', account: 'Sales' }], credits: [{ amount: 1000, date: 'Feb 12', account: 'Returns Inwards' }, { amount: 9000, date: 'Feb 25', account: 'Bank' }] },
-            "Returns Inwards": { debits: [{ amount: 1000, date: 'Feb 12', account: 'Trade Receivables: The Gadget Hub' }], credits: [] },
-            "Rent": { debits: [{ amount: 2500, date: 'Feb 16', account: 'Bank' }], credits: [] },
+            "Returns Inwards": { debits: [{ amount: 1000, date: 'Feb 12', account: 'Trade Receivables: The Gadget Hub' }], credits: [{amount: 1000, date: 'Feb 28', account: 'Balance c/d'}] },
+            "Rent": { debits: [{ amount: 2500, date: 'Feb 16', account: 'Bank' }], credits: [{amount: 2500, date: 'Feb 28', account: 'Balance c/d'}] },
             "Trade Payables: Tech Supplies Inc.": { debits: [{ amount: 2000, date: 'Feb 20', account: 'Returns Outwards' }, { amount: 28000, date: 'Feb 28', account: 'Bank' }], credits: [{ amount: 30000, date: 'Feb 1', account: 'Purchases' }] },
-            "Returns Outwards": { debits: [], credits: [{ amount: 2000, date: 'Feb 20', account: 'Trade Payables: Tech Supplies Inc.' }] },
+            "Returns Outwards": { debits: [{amount: 2000, date: 'Feb 28', account: 'Balance c/d'}], credits: [{ amount: 2000, date: 'Feb 20', account: 'Trade Payables: Tech Supplies Inc.' }] },
         }
     },
     {
@@ -72,12 +72,12 @@ const scenarios = [
         ],
         solution: {
             "Trade Receivables: Innovate Corp": { debits: [{ amount: 15000, date: 'Mar 1', account: 'Legal Fees Revenue' }], credits: [{ amount: 10000, date: 'Mar 10', account: 'Bank' }, { amount: 5000, date: 'Mar 31', account: 'Bank' }] },
-            "Legal Fees Revenue": { debits: [], credits: [{ amount: 15000, date: 'Mar 1', account: 'Trade Receivables: Innovate Corp' }, { amount: 5000, date: 'Mar 25', account: 'Cash' }] },
-            "Salaries": { debits: [{ amount: 35000, date: 'Mar 5', account: 'Bank' }], credits: [] },
+            "Legal Fees Revenue": { debits: [{amount: 20000, date: 'Mar 31', account: 'Balance c/d'}], credits: [{ amount: 15000, date: 'Mar 1', account: 'Trade Receivables: Innovate Corp' }, { amount: 5000, date: 'Mar 25', account: 'Cash' }] },
+            "Salaries": { debits: [{ amount: 35000, date: 'Mar 5', account: 'Bank' }], credits: [{amount: 35000, date: 'Mar 31', account: 'Balance c/d'}] },
             "Bank": { debits: [{ amount: 10000, date: 'Mar 10', account: 'Trade Receivables: Innovate Corp' }, { amount: 5000, date: 'Mar 31', account: 'Trade Receivables: Innovate Corp' }], credits: [{ amount: 35000, date: 'Mar 5', account: 'Salaries' }, { amount: 1200, date: 'Mar 20', account: 'Electricity' }] },
-            "Equipment": { debits: [{ amount: 3000, date: 'Mar 15', account: 'Cash' }], credits: [] },
-            "Cash": { debits: [{ amount: 5000, date: 'Mar 25', account: 'Legal Fees Revenue' }], credits: [{ amount: 3000, date: 'Mar 15', account: 'Equipment' }] },
-            "Electricity": { debits: [{ amount: 1200, date: 'Mar 20', account: 'Bank' }], credits: [] },
+            "Equipment": { debits: [{ amount: 3000, date: 'Mar 15', account: 'Cash' }], credits: [{amount: 3000, date: 'Mar 31', account: 'Balance c/d'}] },
+            "Cash": { debits: [{ amount: 5000, date: 'Mar 25', account: 'Legal Fees Revenue' }], credits: [{ amount: 3000, date: 'Mar 15', account: 'Equipment' }, {amount: 2000, date: 'Mar 31', account: 'Balance c/d'}] },
+            "Electricity": { debits: [{ amount: 1200, date: 'Mar 20', account: 'Bank' }], credits: [{amount: 1200, date: 'Mar 31', account: 'Balance c/d'}] },
         }
     },
     {
@@ -94,13 +94,13 @@ const scenarios = [
             { date: "Apr 28", description: "Received full payment from the school." },
         ],
         solution: {
-            "Purchases": { debits: [{ amount: 25000, date: 'Apr 1', account: 'Trade Payables: Fashion Forward Co.' }], credits: [] },
-            "Prepaid Insurance": { debits: [{ amount: 2400, date: 'Apr 3', account: 'Bank' }], credits: [] },
+            "Purchases": { debits: [{ amount: 25000, date: 'Apr 1', account: 'Trade Payables: Fashion Forward Co.' }], credits: [{amount: 25000, date: 'Apr 30', account: 'Balance c/d'}] },
+            "Prepaid Insurance": { debits: [{ amount: 2400, date: 'Apr 3', account: 'Bank' }], credits: [{amount: 2400, date: 'Apr 30', account: 'Balance c/d'}] },
             "Bank": { debits: [{ amount: 4500, date: 'Apr 28', account: 'Trade Receivables: School' }], credits: [{ amount: 2400, date: 'Apr 3', account: 'Prepaid Insurance' }, { amount: 12500, date: 'Apr 15', account: 'Trade Payables: Fashion Forward Co.' }] },
-            "Cash": { debits: [{ amount: 8000, date: 'Apr 7', account: 'Sales' }], credits: [{ amount: 200, date: 'Apr 10', account: 'Returns Inwards' }] },
-            "Sales": { debits: [], credits: [{ amount: 8000, date: 'Apr 7', account: 'Cash' }, { amount: 5000, date: 'Apr 18', account: 'Trade Receivables: School' }] },
-            "Returns Inwards": { debits: [{ amount: 200, date: 'Apr 10', account: 'Cash' }, { amount: 500, date: 'Apr 22', account: 'Trade Receivables: School' }], credits: [] },
-            "Trade Payables: Fashion Forward Co.": { debits: [{ amount: 12500, date: 'Apr 15', account: 'Bank' }], credits: [{ amount: 25000, date: 'Apr 1', account: 'Purchases' }] },
+            "Cash": { debits: [{ amount: 8000, date: 'Apr 7', account: 'Sales' }], credits: [{ amount: 200, date: 'Apr 10', account: 'Returns Inwards' }, {amount: 7800, date: 'Apr 30', account: 'Balance c/d'}] },
+            "Sales": { debits: [{amount: 13000, date: 'Apr 30', account: 'Balance c/d'}], credits: [{ amount: 8000, date: 'Apr 7', account: 'Cash' }, { amount: 5000, date: 'Apr 18', account: 'Trade Receivables: School' }] },
+            "Returns Inwards": { debits: [{ amount: 200, date: 'Apr 10', account: 'Cash' }, { amount: 500, date: 'Apr 22', account: 'Trade Receivables: School' }], credits: [{amount: 700, date: 'Apr 30', account: 'Balance c/d'}] },
+            "Trade Payables: Fashion Forward Co.": { debits: [{ amount: 12500, date: 'Apr 15', account: 'Bank' }, {amount: 12500, date: 'Apr 30', account: 'Balance c/d'}], credits: [{ amount: 25000, date: 'Apr 1', account: 'Purchases' }] },
             "Trade Receivables: School": { debits: [{ amount: 5000, date: 'Apr 18', account: 'Sales' }], credits: [{ amount: 500, date: 'Apr 22', account: 'Returns Inwards' }, { amount: 4500, date: 'Apr 28', account: 'Bank' }] },
         }
     }

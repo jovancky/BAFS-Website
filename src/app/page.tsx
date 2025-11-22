@@ -49,7 +49,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {shortcuts.map((shortcut) => (
           <Link href={shortcut.href} key={shortcut.title} legacyBehavior>
             <a className="block h-full">

@@ -51,18 +51,20 @@ export default function Home() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {shortcuts.map((shortcut) => (
-          <Link href={shortcut.href} key={shortcut.title} legacyBehavior>
-            <a className="block h-full">
-              <Card className="group h-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-                <CardContent className={cn("flex h-full flex-col items-center justify-center p-6 text-center", shortcut.pattern)}>
-                  <div className={cn("mb-4 rounded-full p-4", shortcut.pattern)}>
-                    <shortcut.icon className={cn("h-10 w-10", shortcut.color)} />
-                  </div>
-                  <h3 className="mb-2 text-lg font-bold">{shortcut.title}</h3>
-                  <p className="text-sm text-muted-foreground">{shortcut.description}</p>
-                </CardContent>
-              </Card>
-            </a>
+          <Link
+            href={shortcut.href}
+            key={shortcut.title}
+            className="block h-full"
+          >
+            <Card className="group h-full transform transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
+              <CardContent className={cn("flex h-full flex-col items-center justify-center p-6 text-center", shortcut.pattern)}>
+                <div className={cn("mb-4 rounded-full p-4", shortcut.pattern)}>
+                  <shortcut.icon className={cn("h-10 w-10", shortcut.color)} />
+                </div>
+                <h3 className="mb-2 text-lg font-bold">{shortcut.title}</h3>
+                <p className="text-sm text-muted-foreground">{shortcut.description}</p>
+              </CardContent>
+            </Card>
           </Link>
         ))}
       </div>

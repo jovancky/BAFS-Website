@@ -6,7 +6,7 @@ import FlashcardDeck from '@/components/flashcards/flashcard-deck';
 const flashcardData = [
   {
     question: "What is the fundamental accounting equation?",
-    answer: "Assets = Liabilities + Equity"
+    answer: "asset = capital + liability"
   },
   {
     question: "What does 'AED' stand for in the context of debit accounts?",

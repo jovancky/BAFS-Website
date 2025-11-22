@@ -9,6 +9,10 @@ const flashcardData = [
     answer: "asset = capital + liability"
   },
   {
+    question: "What is the expanded accounting equation?",
+    answer: "Assets + Expenses + Drawings = Capital + Revenue + Liabilities"
+  },
+  {
     question: "What does 'AED' stand for in the context of debit accounts?",
     answer: "Assets, Expenses, Drawings"
   },

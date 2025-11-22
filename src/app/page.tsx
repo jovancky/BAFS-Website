@@ -14,25 +14,6 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-8">
       
-      <Card className="bg-gradient-to-br from-primary/10 via-transparent to-primary/10 border-primary/20 shadow-lg">
-        <CardHeader className="flex flex-row items-center gap-6 space-y-0 p-6">
-          {userAvatar && 
-            <Image 
-              src={userAvatar.imageUrl} 
-              alt={userAvatar.description} 
-              width={80} 
-              height={80} 
-              className="rounded-full border-4 border-background/50 shadow-md"
-              data-ai-hint={userAvatar.imageHint}
-            />
-          }
-          <div>
-            <CardTitle className="font-headline text-3xl text-primary drop-shadow-sm">Welcome Back, Alex!</CardTitle>
-            <CardDescription className="text-lg text-foreground/80 mt-1">Ready to master accounting? Let's get started.</CardDescription>
-          </div>
-        </CardHeader>
-      </Card>
-
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-6">

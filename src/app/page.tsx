@@ -1,68 +1,132 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Compass, Scale } from 'lucide-react';
+import { ArrowRight, BookOpen, Compass, Layers, Scale, Trophy } from 'lucide-react';
 import Link from 'next/link';
+import ProgressChart from '@/components/dashboard/progress-chart';
+import LeaderboardPreview from '@/components/dashboard/leaderboard-preview';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Image from 'next/image';
+
+const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar-lg');
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       
-      <Card className="bg-primary/10 border-primary/20">
-        <CardHeader>
-          <CardTitle className="font-headline text-3xl text-primary">Welcome, Let's study.</CardTitle>
+      <Card className="bg-gradient-to-br from-primary/10 via-transparent to-primary/10 border-primary/20 shadow-lg">
+        <CardHeader className="flex flex-row items-center gap-6 space-y-0 p-6">
+          {userAvatar && 
+            <Image 
+              src={userAvatar.imageUrl} 
+              alt={userAvatar.description} 
+              width={80} 
+              height={80} 
+              className="rounded-full border-4 border-background/50 shadow-md"
+              data-ai-hint={userAvatar.imageHint}
+            />
+          }
+          <div>
+            <CardTitle className="font-headline text-3xl text-primary drop-shadow-sm">Welcome Back, Alex!</CardTitle>
+            <CardDescription className="text-lg text-foreground/80 mt-1">Ready to master accounting? Let's get started.</CardDescription>
+          </div>
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                    <BookOpen className="h-6 w-6 text-primary" />
-                    <span>Interactive Journal Entry</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">Practice recording transactions with real-time feedback to master the art of debits and credits.</p>
-              <Button asChild className="w-full">
-                <Link href="/journal">
-                    Start Journaling <ArrowRight className="ml-2" />
-                </Link>
-              </Button>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                    <Compass className="h-6 w-6 text-primary" />
-                    <span>Real-world Scenarios</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-4">Apply your knowledge by posting transactions from various business scenarios to the general ledger.</p>
-                 <Button asChild className="w-full">
-                    <Link href="/scenarios">
-                        Explore Scenarios <ArrowRight className="ml-2" />
-                    </Link>
-                </Button>
-            </CardContent>
-        </Card>
-         <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                    <Scale className="h-6 w-6 text-primary" />
-                    <span>Balance Quiz</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-4">Test your understanding of account balances with this quick multiple-choice quiz.</p>
-                 <Button asChild className="w-full">
-                    <Link href="/balance-quiz">
-                        Start Quiz <ArrowRight className="ml-2" />
-                    </Link>
-                </Button>
-            </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Main Content Column */}
+        <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <Card className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                          <BookOpen className="h-6 w-6 text-primary" />
+                          <span>Interactive Journal</span>
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">Master debits and credits with real-time feedback.</p>
+                    <Button asChild className="w-full">
+                      <Link href="/journal">
+                          Start Journaling <ArrowRight />
+                      </Link>
+                    </Button>
+                  </CardContent>
+              </Card>
+              <Card className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                          <Compass className="h-6 w-6 text-primary" />
+                          <span>Real-world Scenarios</span>
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <p className="text-muted-foreground mb-4">Apply your knowledge to various business situations.</p>
+                      <Button asChild className="w-full">
+                          <Link href="/scenarios">
+                              Explore Scenarios <ArrowRight />
+                          </Link>
+                      </Button>
+                  </CardContent>
+              </Card>
+               <Card className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                          <Scale className="h-6 w-6 text-primary" />
+                          <span>Balance Quiz</span>
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <p className="text-muted-foreground mb-4">Test your understanding of T-account balances.</p>
+                      <Button asChild className="w-full">
+                          <Link href="/balance-quiz">
+                              Start Quiz <ArrowRight />
+                          </Link>
+                      </Button>
+                  </CardContent>
+              </Card>
+                <Card className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                          <Layers className="h-6 w-6 text-primary" />
+                          <span>Flashcards</span>
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <p className="text-muted-foreground mb-4">Quickly review and reinforce key concepts.</p>
+                      <Button asChild className="w-full">
+                          <Link href="/flashcards">
+                              Study Cards <ArrowRight />
+                          </Link>
+                      </Button>
+                  </CardContent>
+              </Card>
+          </div>
+           <Card>
+              <CardHeader>
+                <CardTitle>Your Monthly Progress</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ProgressChart />
+              </CardContent>
+            </Card>
+        </div>
+
+        {/* Right Sidebar Column */}
+        <div className="space-y-6">
+           <LeaderboardPreview />
+           <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                        <Trophy className="h-6 w-6 text-yellow-500" />
+                        <span>Achievements</span>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">Coming soon! Earn badges for your progress.</p>
+                </CardContent>
+            </Card>
+        </div>
       </div>
     </div>
   );
